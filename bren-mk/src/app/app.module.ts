@@ -1,3 +1,8 @@
+import { AngularFireModule } from "@angular/fire";
+import { AngularFireAuthModule } from "@angular/fire/auth";
+import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { environment } from '../environments/environment';
+
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
@@ -14,6 +19,8 @@ import { BackofficetoolsComponent } from './pages/backofficetools/backofficetool
 import { ProductdetailComponent } from './common/productdetail/productdetail.component';
 import { MyprofileComponent } from './pages/myprofile/myprofile.component';
 
+import { AuthService } from "./services/auth.service";
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -29,10 +36,13 @@ import { MyprofileComponent } from './pages/myprofile/myprofile.component';
     MyprofileComponent
   ],
   imports: [
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFireAuthModule,
+    AngularFirestoreModule,
     BrowserModule,
     AppRoutingModule
   ],
-  providers: [],
+  providers: [AuthService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
