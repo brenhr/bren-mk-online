@@ -30,75 +30,15 @@ export class AuthService {
     })
   }
 
-  // Sign in with email/password
-  SignIn(email: string, password: string) {
-    return this.afAuth.signInWithEmailAndPassword(email, password)
-      .then((result: any) => {
-        this.ngZone.run(() => {
-          this.router.navigate(['my-profile']);
-        });
-      }).catch((error: any) => {
-        window.alert(error.message)
-      })
-  }
-
-  // Sign up with email/password
-  SignUp(email: string, password: string) {
-    return this.afAuth.createUserWithEmailAndPassword(email, password)
-      .then((result: any) => {
-        this.SendVerificationMail();
-        this.SetUserData(result.user);
-      }).catch((error: any) => {
-        window.alert(error.message)
-      })
-  }
-
-  // Send email verfificaiton when new user sign up
-  SendVerificationMail() {
-    return this.afAuth.currentUser.then(u => {
-      if(u) {
-        u.sendEmailVerification()
-      }
-    }).then(() => {
-      this.router.navigate(['verify-email-address']);
-    })
-  }
-
-  // Reset Forggot password
-  ForgotPassword(passwordResetEmail: string) {
-    return this.afAuth.sendPasswordResetEmail(passwordResetEmail)
-    .then(() => {
-      window.alert('Password reset email sent, check your inbox.');
-    }).catch((error: any) => {
-      window.alert(error)
-    })
-  }
-
-  // Returns true when user is looged in and email is verified
   get isLoggedIn(): boolean {
     const user = JSON.parse(localStorage.getItem('user')  || '{}');
-    return (user !== null && user.emailVerified !== false) ? true : false;
+    return (user !== null && user.emailVerified === true) ? true : false;
   }
 
-  SetUserData(user: any) {
-    const userRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${user.uid}`);
-    const userData: User = {
-      uid: user.uid,
-      email: user.email,
-      displayName: user.displayName,
-      photoURL: user.photoURL,
-      emailVerified: user.emailVerified
-    }
-    return userRef.set(userData, {
-      merge: true
-    })
-  }
-
-  // Sign out 
   SignOut() {
     return this.afAuth.signOut().then(() => {
       localStorage.removeItem('user');
-      this.router.navigate(['sign-in']);
+      this.router.navigate(['home']);
     })
   }
 

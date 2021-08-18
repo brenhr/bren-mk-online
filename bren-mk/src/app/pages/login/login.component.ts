@@ -21,6 +21,7 @@ export class LoginComponent implements OnInit {
 	showAlertSignUpFail: boolean = false;
 	showAlertVerifyEmailFail: boolean = false;
 	showAlertResetPasswordFail: boolean = false;
+	showAlertSignInFail: boolean = false;
 
 
 	constructor(public afs: AngularFirestore,
@@ -34,6 +35,9 @@ export class LoginComponent implements OnInit {
 				this.userData = user;
 				localStorage.setItem('user', JSON.stringify(this.userData));
 				JSON.parse(localStorage.getItem('user')  || '{}');
+				if(this.authService.isLoggedIn){
+					this.router.navigate(['my-profile']);
+				}
 			} else {
 				localStorage.setItem('user', '{}');
 				JSON.parse(localStorage.getItem('user')  || '{}');
@@ -69,8 +73,11 @@ export class LoginComponent implements OnInit {
 				u.sendEmailVerification()
 			}
 		}).then(() => {
-			this.router.navigate(['verify-email-address']);
-		})
+			this.showAlertSingUpSuccess = true;
+		}).catch((error: any) => {
+			this.showAlertVerifyEmailFail = true;
+		});
+
 	}
 
 	forgotPassword(passwordResetEmail: string) {
@@ -81,6 +88,21 @@ export class LoginComponent implements OnInit {
 			console.log(error.message);
 			this.showAlertResetPasswordFail = true;
 		})
+	}
+
+	signIn(email: string, password: string) {
+		console.log("Login...");
+		return this.afAuth.signInWithEmailAndPassword(email, password)
+		.then((result: any) => {
+			this.ngZone.run(() => {
+				this.setUserData(result.user);
+				this.router.navigate(['my-profile']);
+			});
+		}).catch((error: any) => {
+			window.alert(error.message);
+			console.log(error.message);
+			this.showAlertSignInFail = true;
+		});
 	}
 
 	 setUserData(user: any) {

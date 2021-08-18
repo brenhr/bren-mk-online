@@ -2,15 +2,13 @@
 	<div class="row">
 		<div class="col-md-12">
 			<nav class="navbar navbar-expand-lg col-md-12" style="background-color: #edecec;">
-				<a class="navbar-brand col-md-2" href="#"><img src="https://firebasestorage.googleapis.com/v0/b/bren-mk-online.appspot.com/o/bren-mk-logo4.png?alt=media&token=131405f6-2816-4a66-81a1-e08d31905789" style="width: 100%; height: 100%;"></a>
-				<form class="form-inline col-md-7">
-			  		<input type="search" class="form-control rounded col-md-6" placeholder="Search products in our store" aria-label="Search products in our store" aria-describedby="search-addon" />
-					<span class="input-group-text border-0" id="search-addon">
+				<a class="navbar-brand col-md-2" href="/home"><img src="https://firebasestorage.googleapis.com/v0/b/bren-mk-online.appspot.com/o/bren-mk-logo4.png?alt=media&token=131405f6-2816-4a66-81a1-e08d31905789" style="width: 100%; height: 100%;"></a>
+			  		<input type="search" class="form-control rounded col-md-6" style="width: 630px;" placeholder="Search products in our store" aria-label="Search products in our store" aria-describedby="search-addon" />
+					<span class="input-group-text border-0 col-md-1" id="search-addon">
 						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
 							<path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
 						</svg>
 					</span>
-				</form>
 				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon navbar-light"></span>
 				</button>
@@ -19,19 +17,15 @@
 						<li class="nav-item dropdown">
 				    		<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Our products</a>
 				    		<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-				      			<a class="dropdown-item" href="#">Skirts</a>
-				      			<a class="dropdown-item" href="#">Dresses</a>
-				      			<a class="dropdown-item" href="#">Winter clothes</a>
-				      			<a class="dropdown-item" href="#">Coats</a>
-				      			<a class="dropdown-item" href="#">Pants</a>
+				      			<a *ngFor="let category of categories" class="dropdown-item" href="#">{{category.name}}</a>
 				    		</div>
 				  		</li>
 				  		<li class="nav-item dropdown">
 				    		<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">My profile</a>
 				    		<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-				      			<a class="dropdown-item" href="#">Login/Sign up</a>
-				      			<a class="dropdown-item" href="#">See my profile</a>
-				      			<a class="dropdown-item" href="#">Logout</a>
+				      			<a class="dropdown-item" href="/login" *ngIf="showLoginOption">Login/Sign up</a>
+				      			<a class="dropdown-item" href="/my-profile" *ngIf="showMyProfileOption">See my profile</a>
+				      			<a class="dropdown-item" href="#" (click)="authService.SignOut()" *ngIf="showLogoutOption">Logout</a>
 				    		</div>
 				  		</li>
 					</ul>

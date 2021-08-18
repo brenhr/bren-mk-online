@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 @Injectable({
 	providedIn: 'root',
@@ -6,25 +8,25 @@ import { Injectable } from '@angular/core';
 
 export class ReviewService {
 
-	private api:string = 'https://bren-mk-online-default-rtdb.firebaseio.com/';
+	databaseURI: string = environment.firebase.databaseURL;
 
 	constructor(private http:HttpClient) {
 
 	}
 
-	getRewiews(){
-		return this.http.get(`${this.api}review.json`);
+	getRewiews() {
+		return this.http.get(`${this.databaseURI}/review.json`);
 	}
 
-	registerReview(idToken:string, body:object){
-		return this.http.post(`${this.api}/review.json?auth=${token}`, body);
+	registerReview(idToken:string, body:object) {
+		return this.http.post(`${this.databaseURI}/review.json?auth=${idToken}`, body);
 	}
 
-	patchReview(id:string, token:string, value:object){
-		return this.http.patch(`${this.api}review/${id}.json?auth=${token}`,value);
+	patchReview(id:string, idToken:string, value:object) {
+		return this.http.patch(`${this.databaseURI}review/${id}.json?auth=${idToken}`,value);
 	}
 
-	getReviewDetail(id:string){
-		return this.http.get(`${this.api}review/${id}.json`);
+	getReviewDetail(id:string) {
+		return this.http.get(`${this.databaseURI}review/${id}.json`);
 	}
 }

@@ -20,6 +20,7 @@
     "@angular/platform-browser-dynamic": "~12.1.0-",
     "@angular/router": "~12.1.0-",
     "bootstrap": "^5.0.2",
+    "bootstrap4": "0.0.1-security",
     "firebase": "^8.9.0",
     "ngx-bootstrap": "^7.0.0",
     "rxjs": "~6.6.0",

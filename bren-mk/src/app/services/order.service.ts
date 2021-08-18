@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 @Injectable({
 	providedIn: 'root',
@@ -6,21 +8,25 @@ import { Injectable } from '@angular/core';
 
 export class OrderService {
 
-	private api:string = 'https://bren-mk-online-default-rtdb.firebaseio.com/';
+	databaseURI: string = environment.firebase.databaseURL;
 
 	constructor(private http:HttpClient) {
 
 	}
 
-	getOrder(){
-		return this.http.get(`${this.api}order.json`);
+	getOrders(){
+		return this.http.get(`${this.databaseURI}/order.json`);
+	}
+
+	getOrder(id: string){
+		return this.http.get(`${this.databaseURI}/order/${id}.json`);
 	}
 
 	registeOrder(idToken:string, body:object){
-		return this.http.post(`${this.api}/order.json?auth=${token}`, body);
+		return this.http.post(`${this.databaseURI}/order.json?auth=${idToken}`, body);
 	}
 
-	patchOrder(id:string, token:string, value:object){
-		return this.http.patch(`${this.api}order/${id}.json?auth=${token}`,value);
+	patchOrder(id:string, idToken:string, value:object){
+		return this.http.patch(`${this.databaseURI}order/${id}.json?auth=${idToken}`,value);
 	}
 }

@@ -6,15 +6,18 @@ import { LoginComponent } from './pages/login/login.component';
 import { MyprofileComponent } from './pages/myprofile/myprofile.component';
 import { CartComponent } from './pages/cart/cart.component';
 import { CheckoutComponent } from './pages/checkout/checkout.component';
+import { ProductdetailComponent } from './common/productdetail/productdetail.component';
+import { AuthGuard } from "./utils/guard/auth.guard";
 
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'my-profile', component: MyprofileComponent },
+  { path: 'my-profile', component: MyprofileComponent, canActivate: [AuthGuard] },
   { path: 'cart', component: CartComponent },
-  { path: 'checkout', component: CheckoutComponent },
+  { path: 'checkout', component: CheckoutComponent, canActivate: [AuthGuard] },
+  { path: 'product-detail/:id', component: ProductdetailComponent }
 ];
 
 @NgModule({

@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 @Injectable({
 	providedIn: 'root',
@@ -6,22 +8,30 @@ import { Injectable } from '@angular/core';
 
 export class CustomerService {
 
-	private api:string = 'https://bren-mk-online-default-rtdb.firebaseio.com/';
+	databaseURI: string = environment.firebase.databaseURL;
 
 	constructor(private http:HttpClient) {
 
 	}
 
-	registerUser(idToken:string, body:object){
-		return this.http.post(`${this.api}/customer.json?auth=${token}`, body);
+	getUser(id: string){
+		return this.http.get(`${this.databaseURI}/customer/${id}.json`);
 	}
 
-	patchUser(id:string, token:string, value:object){
-		return this.http.patch(`${this.api}customer/${id}.json?auth=${token}`,value);
+	getUserByEmail(email: string) {
+		return this.http.get(`${this.databaseURI}/customer.json?orderBy="email"&startAt="${email}"&print=pretty`);
+	}
+
+	registerUser(idToken:string, body:object){
+		return this.http.post(`${this.databaseURI}/customer.json?auth=${idToken}`, body);
+	}
+
+	patchUser(id:string, idToken:string, value:object){
+		return this.http.patch(`${this.databaseURI}customer/${id}.json?auth=${idToken}`,value);
 	}
 
 	getUserDetail(id:string){
-		return this.http.get(`${this.api}customer/${id}.json`);
+		return this.http.get(`${this.databaseURI}customer/${id}.json`);
 	}
 
 }

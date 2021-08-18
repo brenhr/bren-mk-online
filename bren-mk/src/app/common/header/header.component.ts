@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from "../../services/auth.service";
+import { CategoryService } from '../../services/category.service';
 
 @Component({
   selector: 'app-header',
@@ -7,9 +9,25 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HeaderComponent implements OnInit {
 
-  constructor() { }
+	categories: any;
+	showLogoutOption: boolean;
+	showMyProfileOption: boolean;
+	showLoginOption: boolean;
 
-  ngOnInit(): void {
-  }
+	constructor(public authService: AuthService, private categoryService: CategoryService) {
+		this.showLoginOption = false;
+		this.showLogoutOption = false;
+		this.showMyProfileOption = false;
+	}
+
+	ngOnInit(): void {
+		this.showMyProfileOption = this.authService.isLoggedIn;
+		this.showLoginOption = !this.authService.isLoggedIn;
+		this.showLogoutOption = this.authService.isLoggedIn;
+		
+		this.categoryService.getCategories().subscribe(response => {
+			this.categories = response;
+		})
+	}
 
 }

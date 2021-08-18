@@ -1,0 +1,45 @@
+{
+  "rules": {
+  	"brand": {
+      ".read": true,
+    	".write": "auth != null && auth.email == 'breenn.hr@gmail.com'"
+    },
+    "category": {
+      ".read": true,
+    	".write": "auth != null && auth.email == 'breenn.hr@gmail.com'"
+    },
+    "color": {
+      ".read": true,
+    	".write": "auth != null && auth.email == 'breenn.hr@gmail.com'"
+    },
+    "customer": {
+      ".indexOn": ["email"],
+      ".read": true,
+    	".write": "auth != null"
+    },
+    "item": {
+      ".read": true,
+    	".write": "auth != null"
+    },
+    "order": {
+      ".read": true,
+    	".write": "auth != null"
+    },
+    "product": {
+      ".read": true,
+    	".write": "auth != null && auth.email == 'breenn.hr@gmail.com'"
+    },
+    "review": {
+      ".read": true,
+    	".write": "auth != null"
+    },
+    "totalProducts": {
+      ".read": true,
+    	".write": "auth.email == 'breenn.hr@gmail.com'"
+    },
+    "size": {
+      ".read": true,
+    	".write": "auth.email == 'breenn.hr@gmail.com'"
+    }
+  }
+}

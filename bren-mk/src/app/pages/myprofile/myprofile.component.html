@@ -1,3 +1,4 @@
+<app-header></app-header>
 <hr>
 <div class="container bootstrap snippet">
 	<div class="row">
@@ -20,16 +21,16 @@
     				</li>
     				<li class="list-group-item">
     					<p>
-    						<span><strong>First name:</strong></span><span class="float-right">First name</span>
+    						<span><strong>First name: </strong></span><span class="float-right">{{customerDetail.firstname}}</span>
     					</p>
     					<p>
-    						<span><strong>Last name:</strong></span><span class="float-right">Last name</span>
+    						<span><strong>Last name: </strong></span><span class="float-right">{{customerDetail.lastname}}</span>
     					</p>
     					<p>
-    						<span><strong>Email:</strong></span><span class="float-right">breenn.hr@gmail.com</span>
+    						<span><strong>Email: </strong></span><span class="float-right">{{customerDetail.email}}</span>
     					</p>
     					<p>
-    						<span><strong>Phone number:</strong></span><span class="float-right">5577264898</span>
+    						<span><strong>Phone number: </strong></span><span class="float-right">{{customerDetail.phonenumber}}</span>
     					</p>
     				</li>
   				</ul> 
@@ -39,11 +40,14 @@
           		<div class="card-header">Activity</div>
           		<ul class="list-group list-group-flush">
           			<li class="list-group-item">
-    					<span class="pull-left"><strong>Total orders:</strong></span><span class="float-right">1</span>
+    					<span class="pull-left"><strong>Total orders: </strong></span><span class="float-right">{{totalOrders}}</span>
           			</li>
-          			<li class="list-group-item">
-    					<span class="pull-left"><strong>Total reviews:</strong></span><span class="float-right">1</span>
+          			<li class="list-group-item" *ngIf="!isAdmin">
+    					<span class="pull-left"><strong>Total reviews: </strong></span><span class="float-right">{{totalReviews}}</span>
           			</li>
+                    <li class="list-group-item" *ngIf="isAdmin">
+                        <span class="pull-left"><strong>Score reviews: </strong></span><span class="float-right">{{scoreReviews}}</span>
+                    </li>
           		</ul>
           	</div>
 		</div>
@@ -94,6 +98,19 @@
         			</table>
 				</div>	
                 <div class="tab-pane fade" id="products" role="tabpanel" aria-labelledby="nav-products">
+                    <br>
+                    <div class="row">
+                        <div class="col-md-8"></div>
+                        <div class="col-md-4">
+                            
+                            <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#addProduct">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                                </svg> Add a new product
+                            </button>
+                        </div>
+                    </div>
                     <table class="table">
                         <thead>
             				<tr>
@@ -182,3 +199,124 @@
     	</div>
 	</div>
 </div>
+<div id="addProduct" class="modal fade" role="dialog">
+    <div class="modal-dialog mw-100 w-75">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add a new product to the store</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger" role="alert" id="errorAddingProduct" *ngIf="showAlertErrorAddingProduct" ng-show="showAlertErrorAddProduct">
+                    There was an error while trying to add the product, please try again.
+                </div>
+                <form>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="inputBrand">Brand:</label>
+                            <select id="inputBrand" class="form-select form-select-md mb-3">
+                                <option selected >Choose a brand...</option>
+                                <option>Add a new category</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="inputCategory">Category:</label>
+                            <select id="inputCategory" class="form-control form-select form-select-md mb-3">
+                                <option selected >Choose a category...</option>
+                                <option>Add a new category</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="inputModel">Model:</label>
+                            <input type="text" class="form-control" id="inputModel" #inputModel placeholder="Model">
+                        </div>
+                        <div class="form-group col-md-8">
+                            <label for="inputDescription">Description:</label>
+                            <input type="text" class="form-control" id="inputDescription" #inputDescription placeholder="Description of the product">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="inputPrice">Price (Currency $USD):</label>
+                            <input type="text" class="form-control" id="inputPrice" #inputPrice placeholder="$ (USD)">
+                        </div>
+                        <div class="form-group col-md-8">
+                            <label for="inputKeywords">Keywords (5 maximum):</label>
+                            <input type="text" class="form-control" id="inputKeywords" #inputKeywords placeholder="Separated by a comma">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="inputBrand">Colors:</label>
+                            <select id="inputBrand" class="form-control" multiple>
+                                <option selected >Choose one or more...</option>
+                                <option>Red</option>
+                                <option>Pink</option>
+                                <option>White</option>
+                                <option>Black</option>
+                                <option>Add a new color</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="inputCategory">Sizes:</label>
+                            <select id="inputCategory" class="form-control" multiple>
+                                <option selected >Choose one or more...</option>
+                                <option>XS</option>
+                                <option>S</option>
+                                <option>M</option>
+                                <option>L</option>
+                                <option>Add a new size</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="inputStock">Initial stock:</label>
+                            <input type="text" class="form-control" id="inputStock" #inputPrice placeholder="Stock">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <h4>Load 3 images to your product:</h4>
+                        <table class="table">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Main image</th>
+                                    <th>Image 2</th>
+                                    <th>Image 3</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <td>
+                                    <div class="mb-3 text-center">
+                                        <input class="form-control" type="file" id="mainImage" #mainImage accept='image/*' (change)="preview(mainImage.files, '1')">
+                                        <hr>
+                                        <img [src]="imgURL" height="150" *ngIf="showMainImage">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="mb-3 text-center">
+                                        <input class="form-control" type="file" id="image2" #image2 accept='image/*' (change)="preview(image2.files, '2')">
+                                        <hr>
+                                        <img [src]="imgURL2" height="150" *ngIf="showImage2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="mb-3 text-center">
+                                        <input class="form-control" type="file" id="image3" #image3 accept='image/*' (change)="preview(image3.files, '3')">
+                                        <hr>
+                                        <img [src]="imgURL3" height="150" *ngIf="showImage3">
+                                    </div>
+                                </td>
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Add product</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<app-footer></app-footer>
