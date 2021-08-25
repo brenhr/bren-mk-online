@@ -24,6 +24,6 @@ export class ColorService {
 	}
 
 	patchColor(id:string, idToken:string, value:object){
-		return this.http.patch(`${this.databaseURI}color/${id}.json?auth=${idToken}`, value);
+		return this.http.patch(`${this.databaseURI}/color/${id}.json?auth=${idToken}`, value);
 	}
 }

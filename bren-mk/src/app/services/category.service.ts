@@ -15,6 +15,6 @@ export class CategoryService {
 	}
 
 	registerCategory(idToken: string, body: any){
-		return this.http.post(`${this.databaseURI}/brand.json?auth=${idToken}`, body);
+		return this.http.post(`${this.databaseURI}/category.json?auth=${idToken}`, body);
 	}
 }

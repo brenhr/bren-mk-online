@@ -3,8 +3,8 @@
 <div class="container bootstrap snippet">
 	<div class="row">
 		<div class="col-md-4">
-			<div class="card" style="width: 18rem;">
-  				<div class="card-header text-center">User name</div>
+			<div class="card" style="width: 18rem;" *ngIf="customerDetail">
+  				<div class="card-header text-center">{{customerDetail.username}}</div>
   				<ul class="list-group list-group-flush">
     				<li class="list-group-item text-center">
     					<img src="https://firebasestorage.googleapis.com/v0/b/bren-mk-online.appspot.com/o/profile-default.png?alt=media&token=fd200ebb-cd61-4d17-bd95-6842d7bd0dc0" style="height: 190px;">
@@ -55,50 +55,48 @@
 			<nav>
 				<div class="nav nav-tabs" id="nav-tab" role="tablist">
 					<a class="nav-item nav-link active" id="nav-orders" data-toggle="tab" href="#orders" role="tab" aria-controls="nav-home" aria-selected="true">Orders</a>
-					<a class="nav-item nav-link" id="nav-products" data-toggle="tab" href="#products" role="tab" aria-controls="nav-profile" aria-selected="false">Products</a>
+					<a class="nav-item nav-link" id="nav-products" data-toggle="tab" href="#products" role="tab" aria-controls="nav-profile" aria-selected="false" *ngIf="isAdmin">Products</a>
 					<a class="nav-item nav-link" id="nav-reviews" data-toggle="tab" href="#reviews" role="tab" aria-controls="nav-contact" aria-selected="false">Reviews</a>
 				</div>
 			</nav>
             <div class="tab-content" id="nav-tabContent">
                 <div class="tab-pane fade show active" id="orders" role="tabpanel" aria-labelledby="nav-orders">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col" class="col-sm-1">Order #</th>
-                                <th scope="col" class="col-sm-3">Product</th>
-                                <th scope="col" class="col-sm-3">Address</th>
-                                <th scope="col" class="col-sm-3">Status</th>
-                                <th scope="col" class="col-sm-2">Actions</th>
-            				</tr>
-            			</thead>
-            			<tbody>
-                            <tr>
-            					<th scope="row">MKOD140721001-IT140721001</th>
-            					<td>Silk dress</td>
-            					<td>Pentatlon Mexicano 461, Villa de Guadalupe. C.P. 55339</td>
-            					<td>Delivered. <a href="">See history</a></td>
-            					<td class="text-center">
-            						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
-                                        <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
-            						</svg>
-            					</td>
-            				</tr>
-            				<tr>
-            					<th scope="row">MKOD140721001-IT140721002</th>
-            					<td>Scarf</td>
-            					<td>Pentatlon Mexicano 461, Villa de Guadalupe. C.P. 55339</td>
-            					<td>Delivered. <a href="">See history</a></td>
-            					<td class="text-center">
-            						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
-            							<path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
-            						</svg>
-            					</td>
-            				</tr>
-            			</tbody>
-        			</table>
-				</div>	
-                <div class="tab-pane fade" id="products" role="tabpanel" aria-labelledby="nav-products">
                     <br>
+                    <div class="alert alert-danger" role="alert" id="noOrders" *ngIf="itemsDetail.length <= 0">
+                        There are no active orders for this user. <a href="/home">Start shopping!</a>
+                    </div>
+                    <div id="itemsDiv" *ngIf="itemsDetail.length > 0">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="col-sm-1">Order #</th>
+                                    <th scope="col" class="col-sm-3">Product</th>
+                                    <th scope="col" class="col-sm-3">Address</th>
+                                    <th scope="col" class="col-sm-3">Status</th>
+                                    <th scope="col" class="col-sm-2">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let itemDetail of itemsDetail; let indexOfelement=index;">
+                                    <th scope="row">{{itemDetail.orderId}}</th>
+                                    <td>{{itemDetail.productDetail.name}}</td>
+                                    <td>{{itemDetail.addressDetail.address + ', ' + itemDetail.addressDetail.city + '. ' + itemDetail.addressDetail.zipcode}}</td>
+                                    <td>{{itemDetail.lastStatus.status}}. <a href="">See history</a></td>
+                                    <td class="text-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                                            <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                                        </svg>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+				</div>	
+                <div class="tab-pane fade" id="products" role="tabpanel" aria-labelledby="nav-products" *ngIf="isAdmin">
+                    <br>
+                    <div class="alert alert-danger" role="alert" id="noProducts" *ngIf="detailProducts.length <= 0">
+                        There are no products in the store, please add a new product.
+                    </div>
                     <div class="row">
                         <div class="col-md-8"></div>
                         <div class="col-md-4">
@@ -111,89 +109,76 @@
                             </button>
                         </div>
                     </div>
-                    <table class="table">
-                        <thead>
-            				<tr>
-            					<th scope="col">Product #</th>
-            					<th scope="col">Detail</th>
-            					<th scope="col">Colors</th>
-            					<th scope="col">Sizes</th>
-            					<th scope="col">Actions</th>
-            				</tr>
-        				</thead>
-        				<tbody>
-            				<tr>
-                                <th scope="row">1</th>
-        						<td>Silk dress</td>
-        						<td></td>
-        						<td>XS, S, M, L</td>
-        						<td class="text-center">
-        							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-        								<path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-        								<path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
-        							</svg>
-        							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-        								<path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-        								<path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-        							</svg>
-        						</td>
-        					</tr>
-        					<tr>
-        						<th scope="row">2</th>
-        						<td>Scarf</td>
-        						<td></td>
-        						<td>ONE-SIZE</td>
-        						<td class="text-center">
-        							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-        								<path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-        								<path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
-        							</svg>
-        							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-        								<path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-        								<path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-        							</svg>
-        						</td>
-        					</tr>
-        				</tbody>
-            		</table>
+                    <div id="productsDiv" *ngIf="detailProducts.length > 0">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col-md-2">Product #</th>
+                                    <th scope="col-md-2">Detail</th>
+                                    <th scope="col-md-3">Colors</th>
+                                    <th scope="col-md-3">Sizes</th>
+                                    <th scope="col-md-2">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let detailProduct of detailProducts; let indexOfelement=index;">
+                                    <th scope="row">{{indexOfelement}}</th>
+                                    <td>{{detailProduct.name}}</td>
+                                    <td>
+                                        <span *ngFor="let color of detailProduct.colors;" class="dot" style="background: {{color.hexcode}}" ></span> 
+                                    </td>
+                                    <td>
+                                        <span *ngFor="let size of detailProduct.sizes;" class="name">[{{size.size}}] </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                            <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                                        </svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                                        </svg>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
 				</div>
                 <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="nav-reviews">
-            		<table class="table">
-            			<thead>
-            				<tr>
-        						<th scope="col" class="col-sm-2 text-center">Order #</th>
-        						<th scope="col" class="col-sm-2 text-center">Product detail</th>
-        						<th scope="col" class="col-sm-4 text-center">Score</th>
-        						<th scope="col" class="col-sm-4 text-center">Details</th>
-        					</tr>
-            			</thead>
-        				<tbody>
-        					<tr>
-        						<th scope="row">MKOD140721001-IT140721001</th>
-        						<td>Silk dress</td>
-        						<td class="text-center">
-        							<span class="fa fa-star" id="star1"></span>
-									<span class="fa fa-star" id="star2"></span>
-									<span class="fa fa-star" id="star3"></span>
-									<span class="fa fa-star" id="star4"></span>
-									<span class="fa fa-star" id="star5"></span>
-        						</td>
-        						<td>Good quality, it looks exactly the same as in pictures.</td>
-        					</tr>
-        					<tr>
-        						<th scope="row">MKOD140721001-IT140721002</th>
-        						<td>Scarf</td>
-        						<td class="text-center">
-        							<span class="fa fa-star" id="star1"></span>
-									<span class="fa fa-star" id="star2"></span>
-									<span class="fa fa-star" id="star3"></span>
-									<span class="fa fa-star" id="star4"></span>
-									<span class="fa fa-star" id="star5"></span>
-        						</td>
-        						<td>I love my scarf. Is comfy and beautiful.</td>
-        					</tr>
-        				</tbody>
-            		</table>
+                    <br>
+                    <div class="alert alert-danger" role="alert" id="noReviews" *ngIf="detailReviews.length <= 0 && !isAdmin">
+                        You haven't sent a review of any of our products yet. Please let us know your opinion!
+                    </div>
+                    <div class="alert alert-danger" role="alert" id="noReviews" *ngIf="detailReviews.length <= 0 && isAdmin">
+                        You don't have reviews of any of your products yet.
+                    </div>
+                    <div id="reviewsDiv" *ngIf="detailReviews.length > 0">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="col-sm-2 text-right">Order #</th>
+                                    <th scope="col" class="col-sm-3 text-right">Product detail</th>
+                                    <th scope="col" class="col-sm-3 text-right">Score</th>
+                                    <th scope="col" class="col-sm-4 text-right">Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let detailReview of detailReviews; let indexOfelement=index;">
+                                    <th scope="row">{{detailReview.orderId}}</th>
+                                    <td>{{detailReview.name}}</td>
+                                    <td class="text-right">
+                                        <span class="fa fa-star" id="star1" *ngFor="let item of [].constructor(detailReview.rate); let i = index">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star" viewBox="0 0 16 16">
+                                                <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z"/>
+                                            </svg>                     
+                                        </span>
+                                    </td>
+                                    <td>{{detailReview.description}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
 				</div>	
 			</div>
     	</div>
@@ -248,32 +233,59 @@
                         </div>
                     </div>
                     <div class="form-row">
-                        <div class="form-group col-md-4">
-                            <label for="inputBrand">Colors:</label>
-                            <select id="inputBrand" class="form-control" multiple>
-                                <option selected >Choose one or more...</option>
-                                <option>Red</option>
-                                <option>Pink</option>
-                                <option>White</option>
-                                <option>Black</option>
-                                <option>Add a new color</option>
-                            </select>
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header">
+                                    Add a new version
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-row">
+                                        <div class="form-group col-md-4">
+                                            <label for="inputBrand">Color:</label>
+                                            <select id="inputBrand" class="form-select form-select-md mb-3">
+                                                <option selected >Choose a color...</option>
+                                                <option>Add a new color</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label for="inputCategory">Size:</label>
+                                            <select id="inputCategory" class="form-control form-select form-select-md mb-3">
+                                                <option selected >Choose a size</option>
+                                                <option>Add a new size</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label for="inputDescription">Initial stock:</label>
+                                            <input type="text" class="form-control" id="inputDescription" #inputStock placeholder="Stock of the product">
+                                        </div>
+                                    </div> 
+                                    <div class="form-row">
+                                        <div class="col">
+                                            <button type="button" class="btn btn-outline-success float-end" data-toggle="modal" data-target="#addProduct">Add version</button>
+                                        </div>
+                                    </div>        
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group col-md-4">
-                            <label for="inputCategory">Sizes:</label>
-                            <select id="inputCategory" class="form-control" multiple>
-                                <option selected >Choose one or more...</option>
-                                <option>XS</option>
-                                <option>S</option>
-                                <option>M</option>
-                                <option>L</option>
-                                <option>Add a new size</option>
-                            </select>
-                        </div>
-                        <div class="form-group col-md-4">
-                            <label for="inputStock">Initial stock:</label>
-                            <input type="text" class="form-control" id="inputStock" #inputPrice placeholder="Stock">
-                        </div>
+                    </div>
+                    <div class="form-row">
+                        <h5>Versions</h5>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="col-sm-2 text-right">Size</th>
+                                    <th scope="col" class="col-sm-3 text-right">Color</th>
+                                    <th scope="col" class="col-sm-3 text-right">Initial stock</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th scope="row">blue</th>
+                                    <td>L</td>
+                                    <td class="text-right">10</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                     <div class="row">
                         <h4>Load 3 images to your product:</h4>

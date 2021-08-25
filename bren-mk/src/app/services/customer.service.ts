@@ -19,7 +19,7 @@ export class CustomerService {
 	}
 
 	getUserByEmail(email: string) {
-		return this.http.get(`${this.databaseURI}/customer.json?orderBy="email"&startAt="${email}"&print=pretty`);
+		return this.http.get(`${this.databaseURI}/customer.json?orderBy="email"&equalTo="${email}"&print=pretty`);
 	}
 
 	registerUser(idToken:string, body:object){
@@ -27,11 +27,11 @@ export class CustomerService {
 	}
 
 	patchUser(id:string, idToken:string, value:object){
-		return this.http.patch(`${this.databaseURI}customer/${id}.json?auth=${idToken}`,value);
+		return this.http.patch(`${this.databaseURI}/customer/${id}.json?auth=${idToken}`,value);
 	}
 
 	getUserDetail(id:string){
-		return this.http.get(`${this.databaseURI}customer/${id}.json`);
+		return this.http.get(`${this.databaseURI}/customer/${id}.json`);
 	}
 
 }

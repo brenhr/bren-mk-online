@@ -27,6 +27,6 @@ export class OrderService {
 	}
 
 	patchOrder(id:string, idToken:string, value:object){
-		return this.http.patch(`${this.databaseURI}order/${id}.json?auth=${idToken}`,value);
+		return this.http.patch(`${this.databaseURI}/order/${id}.json?auth=${idToken}`,value);
 	}
 }

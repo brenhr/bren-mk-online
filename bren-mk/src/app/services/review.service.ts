@@ -23,10 +23,10 @@ export class ReviewService {
 	}
 
 	patchReview(id:string, idToken:string, value:object) {
-		return this.http.patch(`${this.databaseURI}review/${id}.json?auth=${idToken}`,value);
+		return this.http.patch(`${this.databaseURI}/review/${id}.json?auth=${idToken}`,value);
 	}
 
 	getReviewDetail(id:string) {
-		return this.http.get(`${this.databaseURI}review/${id}.json`);
+		return this.http.get(`${this.databaseURI}/review/${id}.json`);
 	}
 }

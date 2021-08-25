@@ -22,6 +22,6 @@ export class BrandService {
 	}
 
 	patchBrand(id:string, idToken:string, value:object){
-		return this.http.patch(`${this.databaseURI}brand/${id}.json?auth=${idToken}`, value);
+		return this.http.patch(`${this.databaseURI}/brand/${id}.json?auth=${idToken}`, value);
 	}
 }
