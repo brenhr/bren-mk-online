@@ -1,1 +1,350 @@
-<p>myprofile works!</p>
+<app-header></app-header>
+<div class="container bootstrap snippet">
+    <hr>
+	<div class="row">
+		<div class="col-md-4">
+			<div class="card" style="width: 18rem;" *ngIf="customerDetail">
+  				<div class="card-header text-center">{{customerDetail.username}}</div>
+  				<ul class="list-group list-group-flush">
+    				<li class="list-group-item text-center">
+    					<img [src]="imgProfile" style="height: 190px;">
+    					<h6>Upload a different photo...</h6>
+	    				<div class="input-group mb-3">
+	  						<div class="custom-file">
+	  							<input class="form-control" type="file" id="imgProf" #imgProf accept='image/*' (change)="preview(imgProf.files, '4')">
+	  						</div>
+	  						<div class="input-group-append float-end">
+	  							<span class="input-group-text float-end" id="uploadProfilePhoto" (click)="upload()">Upload</span>
+	  						</div>
+	  					</div>
+                        <div class="alert alert-danger" role="alert" id="errorPicture" *ngIf="showAlertErrorUploadingImage">
+                            An error has occurred. Try again.
+                        </div>
+                        <div class="alert alert-success" role="alert" id="successPicture" *ngIf="showAlertSuccessUploadingImage">
+                            Picture was uploaded successfully.
+                        </div>
+    				</li>
+    				<li class="list-group-item">
+    					<p>
+    						<span><strong>First name: </strong></span><span class="float-right">{{customerDetail.firstname}}</span>
+    					</p>
+    					<p>
+    						<span><strong>Last name: </strong></span><span class="float-right">{{customerDetail.lastname}}</span>
+    					</p>
+    					<p>
+    						<span><strong>Email: </strong></span><span class="float-right">{{customerDetail.email}}</span>
+    					</p>
+    					<p>
+    						<span><strong>Phone number: </strong></span><span class="float-right">{{customerDetail.phonenumber}}</span>
+    					</p>
+    				</li>
+  				</ul> 
+			</div>
+			<br>
+          	<div class="card" style="width: 18rem;">
+          		<div class="card-header">Activity</div>
+          		<ul class="list-group list-group-flush">
+          			<li class="list-group-item">
+    					<span class="pull-left"><strong>Total orders: </strong></span><span class="float-right">{{totalOrders}}</span>
+          			</li>
+          			<li class="list-group-item" *ngIf="!isAdmin">
+    					<span class="pull-left"><strong>Total reviews: </strong></span><span class="float-right">{{totalReviews}}</span>
+          			</li>
+                    <li class="list-group-item" *ngIf="isAdmin">
+                        <span class="pull-left"><strong>Score reviews: </strong></span><span class="float-right">{{scoreReviews}}</span>
+                    </li>
+          		</ul>
+          	</div>
+		</div>
+		<div class="col-md-8">
+			<nav>
+				<div class="nav nav-tabs" id="nav-tab" role="tablist">
+					<a class="nav-item nav-link active" id="nav-orders" data-toggle="tab" href="#orders" role="tab" aria-controls="nav-home" aria-selected="true">Orders</a>
+					<a class="nav-item nav-link" id="nav-products" data-toggle="tab" href="#products" role="tab" aria-controls="nav-profile" aria-selected="false" *ngIf="isAdmin">Products</a>
+					<a class="nav-item nav-link" id="nav-reviews" data-toggle="tab" href="#reviews" role="tab" aria-controls="nav-contact" aria-selected="false">Reviews</a>
+				</div>
+			</nav>
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="orders" role="tabpanel" aria-labelledby="nav-orders">
+                    <br>
+                    <div class="alert alert-danger" role="alert" id="noOrders" *ngIf="itemsDetail.length <= 0">
+                        There are no active orders for this user. <a href="/home">Start shopping!</a>
+                    </div>
+                    <div id="itemsDiv" *ngIf="itemsDetail.length > 0">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="col-sm-1">Order #</th>
+                                    <th scope="col" class="col-sm-3">Product</th>
+                                    <th scope="col" class="col-sm-3">Address</th>
+                                    <th scope="col" class="col-sm-3">Status</th>
+                                    <th scope="col" class="col-sm-2">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let itemDetail of itemsDetail; let indexOfelement=index;">
+                                    <th scope="row">{{itemDetail.orderId}}</th>
+                                    <td>{{itemDetail.productDetail.name}}</td>
+                                    <td>{{itemDetail.addressDetail.address + ', ' + itemDetail.addressDetail.city + '. ' + itemDetail.addressDetail.zipcode}}</td>
+                                    <td>{{itemDetail.lastStatus.status}}. <a href="">See history</a></td>
+                                    <td class="text-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                                            <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                                        </svg>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+				</div>	
+                <div class="tab-pane fade" id="products" role="tabpanel" aria-labelledby="nav-products" *ngIf="isAdmin">
+                    <br>
+                    <div class="alert alert-danger" role="alert" id="noProducts" *ngIf="detailProducts.length <= 0">
+                        There are no products in the store, please add a new product.
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8"></div>
+                        <div class="col-md-4">
+                            
+                            <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#addProduct">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                                </svg> Add a new product
+                            </button>
+                        </div>
+                    </div>
+                    <div id="productsDiv" *ngIf="detailProducts.length > 0">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col-md-2">Product #</th>
+                                    <th scope="col-md-2">Detail</th>
+                                    <th scope="col-md-3">Colors</th>
+                                    <th scope="col-md-3">Sizes</th>
+                                    <th scope="col-md-2">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let detailProduct of detailProducts; let indexOfelement=index;">
+                                    <th scope="row">{{indexOfelement}}</th>
+                                    <td>{{detailProduct.name}}</td>
+                                    <td>
+                                        <span *ngFor="let color of detailProduct.colors;" class="dot" style="background: {{color.hexcode}}" ></span> 
+                                    </td>
+                                    <td>
+                                        <span *ngFor="let size of detailProduct.sizes;" class="name">[{{size.size}}] </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                            <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                                        </svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                                        </svg>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+				</div>
+                <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="nav-reviews">
+                    <br>
+                    <div class="alert alert-danger" role="alert" id="noReviews" *ngIf="detailReviews.length <= 0 && !isAdmin">
+                        You haven't sent a review of any of our products yet. Please let us know your opinion!
+                    </div>
+                    <div class="alert alert-danger" role="alert" id="noReviews" *ngIf="detailReviews.length <= 0 && isAdmin">
+                        You don't have reviews of any of your products yet.
+                    </div>
+                    <div id="reviewsDiv" *ngIf="detailReviews.length > 0">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="col-sm-2 text-right">Order #</th>
+                                    <th scope="col" class="col-sm-3 text-right">Product detail</th>
+                                    <th scope="col" class="col-sm-3 text-right">Score</th>
+                                    <th scope="col" class="col-sm-4 text-right">Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let detailReview of detailReviews; let indexOfelement=index;">
+                                    <th scope="row">{{detailReview.orderId}}</th>
+                                    <td>{{detailReview.name}}</td>
+                                    <td class="text-right">
+                                        <span class="fa fa-star" id="star1" *ngFor="let item of [].constructor(detailReview.rate); let i = index">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star" viewBox="0 0 16 16">
+                                                <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z"/>
+                                            </svg>                     
+                                        </span>
+                                    </td>
+                                    <td>{{detailReview.description}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+				</div>	
+			</div>
+    	</div>
+	</div>
+</div>
+<div id="addProduct" class="modal fade" role="dialog">
+    <div class="modal-dialog mw-100 w-75">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add a new product to the store</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger" role="alert" id="errorAddingProduct" *ngIf="showAlertErrorAddProduct">
+                    There was an error while trying to add the product, please try again.
+                </div>
+                <div class="alert alert-success" role="alert" id="errorAddingProduct" *ngIf="showAlertSuccessAddProduct">
+                    The product was added successfully!
+                </div>
+                <form>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="inputBrand">Brand:</label>
+                            <select id="inputBrand" #inputBrand class="form-select form-select-md mb-3">
+                                <option selected value="-1">Choose a brand...</option>
+                                <option *ngFor="let brand of arrayBrands;" value="{{brand.id}}">{{brand.name}}</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="inputCategory">Category:</label>
+                            <select id="inputCategory" #inputCategory class="form-control form-select form-select-md mb-3">
+                                <option selected value="-1">Choose a category...</option>
+                                <option *ngFor="let category of arrayCategories;" value="{{category.id}}">{{category.name}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="inputModel">Model:</label>
+                            <input type="text" class="form-control" id="inputModel" #inputModel placeholder="Model">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="inputName">Name:</label>
+                            <input type="text" class="form-control" id="inputName" #inputName placeholder="Name of the product">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="inputDescription">Description:</label>
+                            <input type="text" class="form-control" id="inputDescription" #inputDescription placeholder="Description of the product">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="inputPrice">Price (Currency $USD):</label>
+                            <input type="text" class="form-control" id="inputPrice" #inputPrice placeholder="$ (USD)">
+                        </div>
+                        <div class="form-group col-md-8">
+                            <label for="inputKeywords">Keywords (5 maximum):</label>
+                            <input type="text" class="form-control" id="inputKeywords" #inputKeywords placeholder="Separated by a comma">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header">
+                                    Add a new version
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-row">
+                                        <div class="form-group col-md-4">
+                                            <label for="inputColor">Color:</label>
+                                            <select id="inputColor" #inputColor class="form-select form-select-md mb-3">
+                                                <option selected value="-1">Choose a color...</option>
+                                                <option *ngFor="let color of arrayColors;" value="{{color.id}}">
+                                                    {{color.name}}
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label for="inputSize">Size:</label>
+                                            <select id="inputSize" #inputSize class="form-control form-select form-select-md mb-3">
+                                                <option selected value="-1">Choose a size...</option>
+                                                <option *ngFor="let size of arraySizes;" value="{{size.id}}">{{size.size}}</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label for="inputStock">Initial stock:</label>
+                                            <input type="text" class="form-control" id="inputStock" #inputStock placeholder="Stock of the product">
+                                        </div>
+                                    </div> 
+                                    <div class="form-row">
+                                        <div class="col">
+                                            <button type="button" class="btn btn-outline-success float-end" (click)="addVersion(inputColor.value, inputSize.value, inputStock.value)">Add version</button>
+                                        </div>
+                                    </div>        
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12" *ngIf="arrayVersions.length > 0">
+                            <h5>Versions</h5>
+                            <table class="table col-md-12">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="col-md-4 text-right">Size ID</th>
+                                        <th scope="col" class="col-md-4 text-right">Color ID</th>
+                                        <th scope="col" class="col-md-4 text-right">Initial stock</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let version of arrayVersions">
+                                        <th scope="row" class="col-md-4">{{version.size.id}}</th>
+                                        <td class="col-md-4">{{version.color.id}}</td>
+                                        <td class="text-right col-md-4">{{version.stock}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <h4>Load 3 images to your product:</h4>
+                        <table class="table">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Main image</th>
+                                    <th>Image 2</th>
+                                    <th>Image 3</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <td>
+                                    <div class="mb-3 text-center">
+                                        <input class="form-control" type="file" id="mainImage" #mainImage accept='image/*' (change)="preview(mainImage.files, '1')">
+                                        <hr>
+                                        <img [src]="imgURL" height="150" *ngIf="showMainImage">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="mb-3 text-center">
+                                        <input class="form-control" type="file" id="image2" #image2 accept='image/*' (change)="preview(image2.files, '2')">
+                                        <hr>
+                                        <img [src]="imgURL2" height="150" *ngIf="showImage2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="mb-3 text-center">
+                                        <input class="form-control" type="file" id="image3" #image3 accept='image/*' (change)="preview(image3.files, '3')">
+                                        <hr>
+                                        <img [src]="imgURL3" height="150" *ngIf="showImage3">
+                                    </div>
+                                </td>
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" (click)="registerProduct(inputBrand.value, inputCategory.value, inputModel.value, inputName.value, inputDescription.value, inputPrice.value, inputKeywords.value)">Add product</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<app-footer></app-footer>

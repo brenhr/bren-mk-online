@@ -1,3 +1,11 @@
+import { AngularFireModule } from "@angular/fire";
+import { AngularFireAuthModule } from "@angular/fire/auth";
+import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { AngularFireStorageModule, AngularFireStorageReference, AngularFireUploadTask } from "@angular/fire/storage";
+import { AngularFireAnalyticsModule, ScreenTrackingService } from '@angular/fire/analytics';
+import { HttpClientModule } from '@angular/common/http';
+import { environment } from '../environments/environment';
+
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
@@ -10,9 +18,10 @@ import { LoginComponent } from './pages/login/login.component';
 import { CartComponent } from './pages/cart/cart.component';
 import { CheckoutComponent } from './pages/checkout/checkout.component';
 import { OrdersComponent } from './pages/orders/orders.component';
-import { BackofficetoolsComponent } from './pages/backofficetools/backofficetools.component';
 import { ProductdetailComponent } from './common/productdetail/productdetail.component';
 import { MyprofileComponent } from './pages/myprofile/myprofile.component';
+
+import { AuthService } from "./services/auth.service";
 
 @NgModule({
   declarations: [
@@ -24,15 +33,20 @@ import { MyprofileComponent } from './pages/myprofile/myprofile.component';
     CartComponent,
     CheckoutComponent,
     OrdersComponent,
-    BackofficetoolsComponent,
     ProductdetailComponent,
     MyprofileComponent
   ],
   imports: [
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFireAuthModule,
+    AngularFirestoreModule,
+    AngularFireStorageModule,
+    AngularFireAnalyticsModule,
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    HttpClientModule
   ],
-  providers: [],
+  providers: [AuthService, ScreenTrackingService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

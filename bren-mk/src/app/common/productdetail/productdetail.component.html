@@ -1,1 +1,120 @@
-<p>productdetail works!</p>
+<app-header></app-header>
+<div class="container bootstrap snippet">
+	<hr>
+	<div class="row">
+		<div class="col-md-8">
+			<div class="row">
+				<div class="col-md-3">
+					<div *ngIf="productDetail">
+						<div class="row" *ngFor="let image of productDetail.images; let indexOfelement=index;">
+							<div class="col">
+								<a role="button" (click)="selectImage(image.imagepath)">
+									<div class="card" style="width: 150px">
+										<div class="card-body">
+											<img src="{{image.imagepath}}" id="image{{indexOfelement}}" style="height: 120px; width: 120px;" />
+										</div>
+									</div>
+								</a>
+							</div>							
+						</div>
+					</div>
+				</div>
+				<div class="col-md-9" style="padding-left: -15px;">
+					<div class="row">
+						<div class="col">
+							<div class="card" style="width: 465px; ">
+								<div class="card-body">
+									<img src="{{selectedImage}}" style="height:430px; width: 430px;" />
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-4">
+			<div class="row">
+				<div class="col">
+					<h4>{{productDetail.name}}</h4>
+				</div>
+			</div>
+			<hr>
+			<div class="row">
+				<div class="col">
+					<h5> Model:</h5>
+				</div>
+				<div class="col">
+					<h5 class="float-end">{{productDetail.model}}</h5>
+				</div>
+			</div>
+			<br>
+			<div class="row">
+				<div class="col">
+					<h5>Selected color:</h5>
+				</div>
+				<div class="col">
+					<h5 class="float-end">{{selectedColor}}</h5>
+				</div>
+			</div>
+			<div class="row">
+				<div *ngFor="let color of availableColors; let indexOfelement=index;">
+					<a role="button" (click)="selectColor(color.name)">
+						<div class="col" >
+							<span class="dot" style="background: {{color.hexcode}};" id="color{{indexOfelement}}"></span>
+						</div>
+					</a>
+				</div>
+			</div>
+			<br>
+			<div class="row">
+				<div class="col">
+					<h5>Selected Size:</h5>
+				</div>
+				<div class="col">
+					<h5 class="float-end">{{selectedSize}}</h5>
+				</div>
+			</div>
+			<select class="form-select" formControlName="name" aria-label="Size" (change)="selectSize($event)" >
+				<option *ngFor="let size of availableSizes; let indexOfelement=index;" value="{{size.size}}">{{size.size}}</option>
+			</select>
+			<br>
+			<div class="row">
+				<div class="col-md-8">
+					<h5> Quantity:  </h5>
+				</div>
+				<div class="col-md-4">
+					<select class="form-select" formControlName="quantity" aria-label="Quantity" (change)="setQuantity($event)">
+						<option value="1">1</option>
+					</select>
+				</div>
+			</div>
+			<br>
+			<div class="row">
+				<div class="col-md-3">
+					<h4>${{productDetail.price}}</h4>
+				</div>
+				<div class="col-md-9">
+					<a type="button" class="btn float-end" style="background-color: #ff8080" href="/cart/{{id}}/{{selectedColorId}}/{{selectedSizeId}}/{{selectedQuantity}}">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
+							<path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+						</svg> Add to cart
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<br>
+	<div class="row">
+		<div class="col">
+			<div class="card">
+				<div class="card-header">
+	    			Description
+	    		</div>
+	    		<div class="card-body">
+	    			<p>{{productDetail.description}}</p>				
+	    		</div>
+	    	</div>
+		</div>
+	</div>
+</div>
+<app-footer></app-footer>
