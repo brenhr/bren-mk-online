@@ -21,9 +21,9 @@ export class HeaderComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
-		this.showMyProfileOption = this.authService.isLoggedIn;
+		this.showMyProfileOption = this.authService.isLoggedIn && !this.authService.isAnonymous;
 		this.showLoginOption = !this.authService.isLoggedIn;
-		this.showLogoutOption = this.authService.isLoggedIn;
+		this.showLogoutOption = this.authService.isLoggedIn || this.authService.isAnonymous;
 		
 		this.categoryService.getCategories().subscribe(response => {
 			this.categories = response;

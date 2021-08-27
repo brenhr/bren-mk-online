@@ -4,6 +4,7 @@ import { CategoryService } from '../../services/category.service';
 import { BrandService } from '../../services/brand.service';
 import { ColorService } from '../../services/color.service';
 import { ProductService } from '../../services/product.service';
+import { AngularFireAnalytics } from '@angular/fire/analytics';
 
 @Component({
   selector: 'app-home',
@@ -21,18 +22,27 @@ export class HomeComponent implements OnInit {
 	totalColumns: number;
 	totalRows: number;
 	product: any;
+	infoAuth: any;
 
 	constructor(public authService: AuthService, 
 				private categoryService: CategoryService,
 				private brandService: BrandService,
 				private colorService: ColorService,
-				private productService: ProductService) {
+				private productService: ProductService,
+				private analytics: AngularFireAnalytics) {
 		this.rowProducts = [];
 		this.groupProducts =[];
 		this.totalProducts = 0;
 		this.totalColumns = 3;
 		this.totalRows = 0;
-		
+		this.infoAuth = JSON.parse(localStorage.getItem('user')  || '{}');
+		if(this.infoAuth.email !== 'undefined'){
+			let analyticsInfo = {user: "anonymous"};
+			analytics.logEvent('user_anonymous', analyticsInfo);
+		} else {
+			let analyticsInfo = {user: this.infoAuth.email};
+			analytics.logEvent('user_registered', analyticsInfo);
+		}
 	}
 
 	ngOnInit(): void {
@@ -55,7 +65,8 @@ export class HomeComponent implements OnInit {
 
 	getAllProducts() {
 		this.productService.getTotalProducts().subscribe(response =>{
-			this.totalProducts = parseInt(<string>response);
+			let resp = JSON.parse(JSON.stringify(response));
+			this.totalProducts = parseInt(resp.number.toString());
 			this.totalRows = Math.floor(this.totalProducts / this.totalColumns);
 			this.totalProducts % this.totalColumns > 0 ? 
 				this.totalRows = this.totalRows + 1: this.totalRows = this.totalRows;

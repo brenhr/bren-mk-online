@@ -1,23 +1,28 @@
 <app-header></app-header>
-<hr>
 <div class="container bootstrap snippet">
+    <hr>
 	<div class="row">
 		<div class="col-md-4">
 			<div class="card" style="width: 18rem;" *ngIf="customerDetail">
   				<div class="card-header text-center">{{customerDetail.username}}</div>
   				<ul class="list-group list-group-flush">
     				<li class="list-group-item text-center">
-    					<img src="https://firebasestorage.googleapis.com/v0/b/bren-mk-online.appspot.com/o/profile-default.png?alt=media&token=fd200ebb-cd61-4d17-bd95-6842d7bd0dc0" style="height: 190px;">
+    					<img [src]="imgProfile" style="height: 190px;">
     					<h6>Upload a different photo...</h6>
 	    				<div class="input-group mb-3">
 	  						<div class="custom-file">
-	  							<input type="file" class="custom-file-input" id="inputGroupFile02">
-	  							<label class="custom-file-label" for="inputGroupFile02"></label>
+	  							<input class="form-control" type="file" id="imgProf" #imgProf accept='image/*' (change)="preview(imgProf.files, '4')">
 	  						</div>
-	  						<div class="input-group-append">
-	  							<span class="input-group-text" id="">Upload</span>
+	  						<div class="input-group-append float-end">
+	  							<span class="input-group-text float-end" id="uploadProfilePhoto" (click)="upload()">Upload</span>
 	  						</div>
 	  					</div>
+                        <div class="alert alert-danger" role="alert" id="errorPicture" *ngIf="showAlertErrorUploadingImage">
+                            An error has occurred. Try again.
+                        </div>
+                        <div class="alert alert-success" role="alert" id="successPicture" *ngIf="showAlertSuccessUploadingImage">
+                            Picture was uploaded successfully.
+                        </div>
     				</li>
     				<li class="list-group-item">
     					<p>
@@ -192,23 +197,26 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="alert alert-danger" role="alert" id="errorAddingProduct" *ngIf="showAlertErrorAddingProduct" ng-show="showAlertErrorAddProduct">
+                <div class="alert alert-danger" role="alert" id="errorAddingProduct" *ngIf="showAlertErrorAddProduct">
                     There was an error while trying to add the product, please try again.
+                </div>
+                <div class="alert alert-success" role="alert" id="errorAddingProduct" *ngIf="showAlertSuccessAddProduct">
+                    The product was added successfully!
                 </div>
                 <form>
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="inputBrand">Brand:</label>
-                            <select id="inputBrand" class="form-select form-select-md mb-3">
-                                <option selected >Choose a brand...</option>
-                                <option>Add a new category</option>
+                            <select id="inputBrand" #inputBrand class="form-select form-select-md mb-3">
+                                <option selected value="-1">Choose a brand...</option>
+                                <option *ngFor="let brand of arrayBrands;" value="{{brand.id}}">{{brand.name}}</option>
                             </select>
                         </div>
                         <div class="form-group col-md-6">
                             <label for="inputCategory">Category:</label>
-                            <select id="inputCategory" class="form-control form-select form-select-md mb-3">
-                                <option selected >Choose a category...</option>
-                                <option>Add a new category</option>
+                            <select id="inputCategory" #inputCategory class="form-control form-select form-select-md mb-3">
+                                <option selected value="-1">Choose a category...</option>
+                                <option *ngFor="let category of arrayCategories;" value="{{category.id}}">{{category.name}}</option>
                             </select>
                         </div>
                     </div>
@@ -217,7 +225,11 @@
                             <label for="inputModel">Model:</label>
                             <input type="text" class="form-control" id="inputModel" #inputModel placeholder="Model">
                         </div>
-                        <div class="form-group col-md-8">
+                        <div class="form-group col-md-4">
+                            <label for="inputName">Name:</label>
+                            <input type="text" class="form-control" id="inputName" #inputName placeholder="Name of the product">
+                        </div>
+                        <div class="form-group col-md-4">
                             <label for="inputDescription">Description:</label>
                             <input type="text" class="form-control" id="inputDescription" #inputDescription placeholder="Description of the product">
                         </div>
@@ -241,27 +253,29 @@
                                 <div class="card-body">
                                     <div class="form-row">
                                         <div class="form-group col-md-4">
-                                            <label for="inputBrand">Color:</label>
-                                            <select id="inputBrand" class="form-select form-select-md mb-3">
-                                                <option selected >Choose a color...</option>
-                                                <option>Add a new color</option>
+                                            <label for="inputColor">Color:</label>
+                                            <select id="inputColor" #inputColor class="form-select form-select-md mb-3">
+                                                <option selected value="-1">Choose a color...</option>
+                                                <option *ngFor="let color of arrayColors;" value="{{color.id}}">
+                                                    {{color.name}}
+                                                </option>
                                             </select>
                                         </div>
                                         <div class="form-group col-md-4">
-                                            <label for="inputCategory">Size:</label>
-                                            <select id="inputCategory" class="form-control form-select form-select-md mb-3">
-                                                <option selected >Choose a size</option>
-                                                <option>Add a new size</option>
+                                            <label for="inputSize">Size:</label>
+                                            <select id="inputSize" #inputSize class="form-control form-select form-select-md mb-3">
+                                                <option selected value="-1">Choose a size...</option>
+                                                <option *ngFor="let size of arraySizes;" value="{{size.id}}">{{size.size}}</option>
                                             </select>
                                         </div>
                                         <div class="form-group col-md-4">
-                                            <label for="inputDescription">Initial stock:</label>
-                                            <input type="text" class="form-control" id="inputDescription" #inputStock placeholder="Stock of the product">
+                                            <label for="inputStock">Initial stock:</label>
+                                            <input type="text" class="form-control" id="inputStock" #inputStock placeholder="Stock of the product">
                                         </div>
                                     </div> 
                                     <div class="form-row">
                                         <div class="col">
-                                            <button type="button" class="btn btn-outline-success float-end" data-toggle="modal" data-target="#addProduct">Add version</button>
+                                            <button type="button" class="btn btn-outline-success float-end" (click)="addVersion(inputColor.value, inputSize.value, inputStock.value)">Add version</button>
                                         </div>
                                     </div>        
                                 </div>
@@ -269,23 +283,25 @@
                         </div>
                     </div>
                     <div class="form-row">
-                        <h5>Versions</h5>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th scope="col" class="col-sm-2 text-right">Size</th>
-                                    <th scope="col" class="col-sm-3 text-right">Color</th>
-                                    <th scope="col" class="col-sm-3 text-right">Initial stock</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <th scope="row">blue</th>
-                                    <td>L</td>
-                                    <td class="text-right">10</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div class="col-md-12" *ngIf="arrayVersions.length > 0">
+                            <h5>Versions</h5>
+                            <table class="table col-md-12">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="col-md-4 text-right">Size ID</th>
+                                        <th scope="col" class="col-md-4 text-right">Color ID</th>
+                                        <th scope="col" class="col-md-4 text-right">Initial stock</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let version of arrayVersions">
+                                        <th scope="row" class="col-md-4">{{version.size.id}}</th>
+                                        <td class="col-md-4">{{version.color.id}}</td>
+                                        <td class="text-right col-md-4">{{version.stock}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                     <div class="row">
                         <h4>Load 3 images to your product:</h4>
@@ -325,7 +341,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="submit" class="btn btn-primary">Add product</button>
+                <button type="submit" class="btn btn-primary" (click)="registerProduct(inputBrand.value, inputCategory.value, inputModel.value, inputName.value, inputDescription.value, inputPrice.value, inputKeywords.value)">Add product</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>

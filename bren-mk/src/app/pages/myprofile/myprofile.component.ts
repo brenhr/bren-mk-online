@@ -11,6 +11,8 @@ import { OrderService } from '../../services/order.service';
 import { ItemService } from '../../services/item.service';
 import { AddressService} from '../../services/address.service';
 import { SizeService } from '../../services/size.service';
+import { Fileupload } from '../../utils/models/fileupload';
+import { StorageService } from '../../services/storage.service';
 
 @Component({
   selector: 'app-myprofile',
@@ -20,10 +22,15 @@ import { SizeService } from '../../services/size.service';
 
 export class MyprofileComponent implements OnInit {
   public imagePath: any;
-  showAlertErrorAddingProduct: boolean;
+  showAlertErrorAddProduct: boolean;
+  showAlertSuccessAddProduct: boolean;
   imgURL: any;
   imgURL2: any;
   imgURL3: any;
+  img1: any;
+  img2: any;
+  img3: any;
+  imgProfile: any;
   public message: string;
   showMainImage: boolean;
   showImage2: boolean;
@@ -43,6 +50,17 @@ export class MyprofileComponent implements OnInit {
   itemsDetail: any[];
   detailReviews: any[];
   detailProducts: any[];
+  selectedFiles?: FileList;
+  currentFileUpload?: Fileupload;
+  infoAuth: any;
+  showAlertErrorUploadingImage: boolean;
+  showAlertSuccessUploadingImage: boolean;
+  arrayColors: any;
+  arraySizes: any;
+  arrayCategories: any;
+  arrayBrands: any;
+  arrayVersions: any[];
+
 
   constructor(public authService: AuthService, 
               private storage: AngularFireStorage,
@@ -53,7 +71,11 @@ export class MyprofileComponent implements OnInit {
               private productService: ProductService,
               private addressService: AddressService,
               private colorService: ColorService,
-              private sizeService: SizeService) {
+              private sizeService: SizeService,
+              private storageService: StorageService,
+              private brandService: BrandService,
+              private categoryService: CategoryService) {
+
   	this.imagePath = null;
   	this.imgURL = null;
   	this.imgURL2 = null;
@@ -62,7 +84,10 @@ export class MyprofileComponent implements OnInit {
   	this.showMainImage = false;
     this.showImage2 = false;
     this.showImage3 = false;
-    this.showAlertErrorAddingProduct = false;
+    this.showAlertErrorAddProduct = false;
+    this.showAlertSuccessAddProduct = false;
+    this.showAlertErrorUploadingImage = false;
+    this.showAlertSuccessUploadingImage = false;
     this.orders = [];
     this.items = [];
     this.itemsDetail = [];
@@ -71,6 +96,10 @@ export class MyprofileComponent implements OnInit {
     this.detailTotalOrders = [];
     this.detailReviews = [];
     this.detailProducts = [];
+    this.arrayVersions = [];
+
+    let info = JSON.parse(localStorage.getItem('user')  || '{}');
+    this.infoAuth = info.stsTokenManager.accessToken;
   }
 
   preview(files: any, id: string) {
@@ -90,12 +119,17 @@ export class MyprofileComponent implements OnInit {
       if(id ==='1') {
       	this.imgURL = reader.result; 
       	this.showMainImage = true;
+        this.img1 = files;
       } else if(id ==='2') {
       	this.imgURL2 = reader.result; 
       	this.showImage2 = true;
-      } else{
+        this.img2 = files;
+      } else if(id === '3'){
+        this.img3 = files;
       	this.imgURL3 = reader.result; 
       	this.showImage3 = true;
+      } else {
+        this.imgProfile = reader.result;
       }
     }
   }
@@ -110,6 +144,7 @@ export class MyprofileComponent implements OnInit {
       resp = this.setCharAt(resp, resp.length-1, "]");
       let respJson = JSON.parse(resp);
       this.customerDetail = respJson[0];
+      this.imgProfile = this.customerDetail.profilepicture;
       this.isAdmin = this.customerDetail.role === "admin"? true: false;
       this.orders = this.customerDetail.orders;
       this.totalOrders = this.orders.length;
@@ -130,7 +165,7 @@ export class MyprofileComponent implements OnInit {
         }
       }
     });
-
+    this.getCatalogos();
     this.reviewService.getRewiews().subscribe(response =>{
       this.allReviews = response;
       this.arrayReviews = JSON.parse(JSON.stringify(response));
@@ -232,7 +267,6 @@ export class MyprofileComponent implements OnInit {
         }
         this.detailProducts.push(resp[i]);
       }
-      console.log(this.detailProducts);
     });
   }
 
@@ -265,6 +299,121 @@ export class MyprofileComponent implements OnInit {
       }
     }
     return false;
+  }
+
+  upload(): void {
+    this.showAlertErrorUploadingImage = false;
+    this.showAlertSuccessUploadingImage = false;
+    if (this.imagePath) {
+      const file: File | null = this.imagePath.item(0);
+      this.selectedFiles = undefined;
+      if (file) {
+        this.currentFileUpload = new Fileupload(file);
+        this.storageService.pushFileToStorage(this.currentFileUpload, this.customerDetail.id, this.customerDetail.username, this.infoAuth).subscribe(
+          percentage => {
+            if(percentage === 100) {
+              this.showAlertSuccessUploadingImage = true;
+            }
+          },
+          error => {
+            this.showAlertErrorUploadingImage = true;
+          }
+        );
+      }
+    }
+  }
+
+  getCatalogos() {
+    this.brandService.getBrands().subscribe(response =>{
+      this.arrayBrands = response;
+    });
+    this.categoryService.getCategories().subscribe(response =>{
+      this.arrayCategories = response;
+    });
+    this.colorService.getColors().subscribe(response =>{
+      this.arrayColors = response;
+    });
+    this.sizeService.getSizes().subscribe(response =>{
+      this.arraySizes = response;
+    });
+  }
+
+  registerProduct(brand: string, category: string, model: string, name: string, description: string, price: string, keywords: string){
+    let product= {
+      brand: { id: ""},
+      category: { id: "" },
+      description: "",
+      details: [{}],
+      images: [{}],
+      keywords: "",
+      model: "",
+      name: "",
+      price: ""
+    }
+    product.brand.id = brand;
+    product.category.id = category;
+    product.description = description;
+    product.price = price;
+    product.details =[];
+    product.model = model;
+    product.name = name;
+    for(let i= 0; i< this.arrayVersions.length; i++){
+      product.details.push(this.arrayVersions[i]);
+    }
+    product.keywords = keywords.split(",").toString();
+    let productId = this.productService.getTotalProducts().subscribe(idProd => {
+      let jsonNumber = JSON.parse(JSON.stringify(idProd));
+      this.productService.registerProduct(jsonNumber.number.toString(), this.infoAuth, product).subscribe(response =>{
+        let resp = JSON.parse(JSON.stringify(response));
+        this.productService.patchProduct(jsonNumber.number.toString(), this.infoAuth, {id: jsonNumber.number.toString()}).subscribe(patchResponse =>{
+          let currentId = parseInt(jsonNumber.number.toString());
+          currentId = currentId +1;
+          this.productService.patchTotalProducts(this.infoAuth, {number: currentId.toString()});
+          this.uploadProductImages(jsonNumber.number.toString(), model);
+        }, error =>{
+          console.log(error);
+        });
+      });
+    });
+  }
+
+  addVersion(idColor: string, idSize: string, stock: string){
+    let version = {
+      color: {id: ""},
+      size: {id: ""},
+      stock: "",
+      soldunits: "0"
+    }
+    version.color.id = idColor;
+    version.size.id = idSize;
+    version.stock = stock;
+    this.arrayVersions.push(version);
+  }
+
+  uploadProductImages(idProduct: string, model: string){
+
+    if (this.imgURL && this.imgURL2 && this.imgURL3) {
+      const file1: File | null = this.img1.item(0);
+      const file2: File | null = this.img2.item(0);
+      const file3: File | null = this.img3.item(0);
+      this.selectedFiles = undefined;
+      if (file1 && file2 && file3) {
+        let currentFileUpload1 = new Fileupload(file1);
+        let currentFileUpload2 = new Fileupload(file2);
+        let currentFileUpload3 = new Fileupload(file3);
+        this.storageService.pushFilesToStorage(currentFileUpload1, currentFileUpload2, currentFileUpload3, idProduct, model, this.infoAuth).subscribe(
+          percentage => {
+            if(percentage === 100) {
+              this.showAlertSuccessAddProduct = true;
+            }
+          },
+          error => {
+            this.showAlertErrorAddProduct = true;
+          }
+        );
+      }
+    }
+
   }
 
 }

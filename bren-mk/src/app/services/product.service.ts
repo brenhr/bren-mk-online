@@ -17,12 +17,12 @@ export class ProductService {
 		return this.http.get(`${this.databaseURI}/product.json`);
 	}
 
-	registerProduct(idToken:string, body:object){
-		return this.http.post(`${this.databaseURI}/product.json?auth=${idToken}`, body);
+	registerProduct(id: string, idToken:string, body:object){
+		return this.http.patch(`${this.databaseURI}/product/${id}.json?auth=${idToken}`, body);
 	}
 
 	patchProduct(id:string, idToken:string, value:object){
-		return this.http.patch(`${this.databaseURI}product/${id}.json?auth=${idToken}`,value);
+		return this.http.patch(`${this.databaseURI}/product/${id}.json?auth=${idToken}`,value);
 	}
 
 	getProductDetail(id:string){
@@ -35,5 +35,9 @@ export class ProductService {
 
 	getTotalProducts() {
 		return this.http.get(`${this.databaseURI}/totalProducts.json`);
+	}
+
+	patchTotalProducts(idToken: string, number: any){
+		return this.http.patch(`${this.databaseURI}/totalProducts.json?auth=${idToken}`, number);
 	}
 }

@@ -22,16 +22,24 @@ export class CustomerService {
 		return this.http.get(`${this.databaseURI}/customer.json?orderBy="email"&equalTo="${email}"&print=pretty`);
 	}
 
-	registerUser(idToken:string, body:object){
-		return this.http.post(`${this.databaseURI}/customer.json?auth=${idToken}`, body);
+	registerUser(id: string, body:object){
+		return this.http.patch(`${this.databaseURI}/customer/${id}.json`, body);
 	}
 
-	patchUser(id:string, idToken:string, value:object){
-		return this.http.patch(`${this.databaseURI}/customer/${id}.json?auth=${idToken}`,value);
+	patchUser(id:string, value:object){
+		return this.http.patch(`${this.databaseURI}/customer/${id}.json`,value);
 	}
 
 	getUserDetail(id:string){
 		return this.http.get(`${this.databaseURI}/customer/${id}.json`);
+	}
+
+	getTotalCustomers() {
+		return this.http.get(`${this.databaseURI}/totalCustomers.json`);
+	}
+
+	patchTotalCustomer(number: any){
+		return this.http.patch(`${this.databaseURI}/totalCustomers.json`, number);
 	}
 
 }

@@ -35,11 +35,25 @@ export class AuthService {
     return (user !== null && user.emailVerified === true) ? true : false;
   }
 
+  get isAnonymous(): boolean {
+    const user = JSON.parse(localStorage.getItem('user')  || '{}');
+    return (user !== null && user.uid != null && user.uid != 'undefined' && !user.email ) ? true : false;
+  }
+
   SignOut() {
     return this.afAuth.signOut().then(() => {
       localStorage.removeItem('user');
       this.router.navigate(['home']);
-    })
+    });
+  }
+
+  anonymousLogin() {
+    return this.afAuth.signInAnonymously()
+      .then((user) => {
+        this.userData = user;
+        localStorage.setItem('user', JSON.stringify(this.userData));
+      })
+      .catch(error => console.log(error));
   }
 
 }

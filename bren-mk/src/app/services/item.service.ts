@@ -21,11 +21,19 @@ export class ItemService {
 		return this.http.get(`${this.databaseURI}/item.json`);
 	}
 
-	registerItem(idToken:string, body:object){
-		return this.http.post(`${this.databaseURI}/item.json?auth=${idToken}`, body);
+	registerItem(id: string, idToken:string, body:object){
+		return this.http.patch(`${this.databaseURI}/item/${id}.json?auth=${idToken}`, body);
 	}
 
 	patchItem(id:string, idToken:string, value:object){
 		return this.http.patch(`${this.databaseURI}/item/${id}.json?auth=${idToken}`,value);
+	}
+
+	getTotalItems() {
+		return this.http.get(`${this.databaseURI}/totalItems.json`);
+	}
+
+	patchTotalItems(idToken: string, number: any){
+		return this.http.patch(`${this.databaseURI}/totalItems.json?auth=${idToken}`, number);
 	}
 }

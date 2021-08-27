@@ -17,15 +17,18 @@
         "email"
       ],
       ".read": true,
-      ".write": "auth != null"
+      ".write": true
     },
     "item": {
       ".read": true,
       ".write": "auth != null"
     },
     "order": {
+      ".indexOn": [
+        "uid"
+      ],
       ".read": true,
-      ".write": "auth != null"
+      ".write": true
     },
     "product": {
       ".read": true,
@@ -42,6 +45,26 @@
     "size": {
       ".read": true,
       ".write": "auth.email == 'breenn.hr@gmail.com'"
+    },
+    "address": {
+      ".read": true,
+      ".write": "auth != null"
+    },
+    "totalOrders": {
+      ".read": true,
+      ".write": "auth != null"
+    },
+    "totalCustomers": {
+      ".read": true,
+      ".write": true
+    },
+    "totalReviews": {
+      ".read": true,
+      ".write": "auth != null"
+    },
+    "totalItems": {
+      ".read": true,
+      ".write": "auth != null"
     }
   }
 }
