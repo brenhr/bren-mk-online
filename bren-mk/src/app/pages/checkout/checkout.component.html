@@ -1,1 +1,28 @@
-<p>checkout works!</p>
+<div class="container bootstrap snippet">
+    <hr>
+	<div class="row">
+		<div class="col-md-6">
+			<div class="form-row">
+				<div class="form-group">
+					<label for="firstName">ID</label>
+					<input type="text" class="form-control" id="id" #id placeholder="ID">
+				</div>
+				<div class="form-group">
+					<label for="lastName">Name</label>
+					<input type="text" class="form-control" id="name" #name placeholder="name">
+				</div>
+				<br>
+				<div class="form-group">
+					<button type="submit" class="btn btn-primary" (click)="fillForm(id.value, name.value)">Submit</button>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<h4>Your stored data:</h4>
+			<p>Child key: {{key}}</p>
+			<p>ID: {{result.id}}</p>
+			<p>Name: {{result.name}}</p>
+
+		</div>
+	</div>
+</div>

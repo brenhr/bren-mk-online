@@ -17,7 +17,7 @@ const routes: Routes = [
   { path: 'my-profile', component: MyprofileComponent, canActivate: [AuthGuard] },
   { path: 'cart/:id/:colorId/:sizeId/:quantity', component: CartComponent },
   { path: 'cart', component: CartComponent },
-  { path: 'checkout', component: CheckoutComponent, canActivate: [AuthGuard] },
+  { path: 'checkout', component: CheckoutComponent },
   { path: 'product-detail/:id', component: ProductdetailComponent }
 ];
 

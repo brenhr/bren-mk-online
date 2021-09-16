@@ -2,5 +2,14 @@
   "projects": {
     "default": "bren-mk-online",
     "dev": "bren-mk-online"
+  },
+  "targets": {
+    "bren-mk-online": {
+      "hosting": {
+        "bren-mk": [
+          "bren-mk-online"
+        ]
+      }
+    }
   }
 }

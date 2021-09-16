@@ -25,4 +25,6 @@ export class SizeService {
 	patchSize(id:string, idToken:string, value:object){
 		return this.http.patch(`${this.databaseURI}/size/${id}.json?auth=${idToken}`, value);
 	}
+
+	
 }
