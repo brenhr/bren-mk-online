@@ -22,6 +22,7 @@ import { ProductdetailComponent } from './common/productdetail/productdetail.com
 import { MyprofileComponent } from './pages/myprofile/myprofile.component';
 
 import { AuthService } from "./services/auth.service";
+import { ExampleComponent } from './pages/example/example.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { AuthService } from "./services/auth.service";
     CheckoutComponent,
     OrdersComponent,
     ProductdetailComponent,
-    MyprofileComponent
+    MyprofileComponent,
+    ExampleComponent
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebase),

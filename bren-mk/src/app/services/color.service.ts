@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { Color } from '../utils/models/color';
+import { AngularFirestore, AngularFirestoreDocument, AngularFirestoreCollection } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -9,21 +12,18 @@ export class ColorService {
 
 	databaseURI: string = environment.firebase.databaseURL;
 
-	constructor(private http:HttpClient) { }
+	constructor(private http:HttpClient,
+				private firestore: AngularFirestore) { }
 
-	getColors(){
-		return this.http.get(`${this.databaseURI}/color.json`);
+	getColors(): AngularFirestoreCollection {
+		return this.firestore.collection('color');
 	}
 
-	getColor(id: string){
-		return this.http.get(`${this.databaseURI}/color/${id}.json`);
+	registerColors(body: Color): Promise<any>{
+		return this.firestore.collection('color').add({... body});
 	}
 
-	registerColor(idToken:string, body:object){
-		return this.http.post(`${this.databaseURI}/color.json?auth=${idToken}`, body);
-	}
-
-	patchColor(id:string, idToken:string, value:object){
-		return this.http.patch(`${this.databaseURI}/color/${id}.json?auth=${idToken}`, value);
+	getColor(id:string): Observable<any>{
+		return this.firestore.collection('color').doc(id).valueChanges();
 	}
 }

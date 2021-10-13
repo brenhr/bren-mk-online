@@ -9,7 +9,7 @@
 			</div>
 			<div class="card">
 				<h5 class="card-header text-center">
-					<img src="https://firebasestorage.googleapis.com/v0/b/bren-mk-online.appspot.com/o/bren-mk-logo4.png?alt=media&token=131405f6-2816-4a66-81a1-e08d31905789" style="width: 80%; height: 80%;">
+					<img src="https://firebasestorage.googleapis.com/v0/b/bren-mk-online.appspot.com/o/assets%2Fbren-mk-logo4.png?alt=media&token=c8acf816-b703-4924-a0db-74ba18c07038" style="width: 80%; height: 80%;">
 					<p>Login to our store</p>
 				</h5>
 				<div class="card-body">
@@ -32,7 +32,7 @@
 							<input type="password" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="password" formControlName="password" #password required>
 					  	</div>
 					  	<div class="form-group">
-					  		<button class="btn btn-primary" (click)="signIn(email.value, password.value)">Login</button>
+					  		<button type="button" class="btn btn-primary" (click)="signIn(email.value, password.value)">Login</button>
 					  	</div>
 					  	<hr>
 					  	<div class="form-group">
@@ -58,13 +58,13 @@
 						The passwords provided don't match, please check them.
 					</div>
 					<div class="alert alert-danger" role="alert" id="alertVerifyEmailFail" *ngIf="showAlertVerifyEmailFail">
-						We couldn't send a mail to verify your account, please <a href="#" (click)=sendVerificationMail()>try again</a>.
+						We couldn't send a mail to verify your account, please try again.
 					</div>
 					<div class="alert alert-danger" role="alert" id="alertSignUpFail" *ngIf="showAlertSignUpFail">
 						An uknown error has ocurred, please try again.
 					</div>
 					<div class="alert alert-success" role="alert" id="alertSingUpSuccess" *ngIf="showAlertSingUpSuccess">
-						We have sent a mail to confirm your identity, please check your inbox. If you haven't received yet, please click <a href="#" (click)=sendVerificationMail()>here</a> to resend it.
+						We have sent a mail to confirm your identity, please check your inbox.
 					</div>
 					<form>
 						<div class="form-row">

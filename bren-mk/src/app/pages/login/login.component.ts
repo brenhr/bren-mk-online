@@ -9,6 +9,7 @@ import { User } from "../../utils/models/user";
 import { environment } from '../../../environments/environment';
 import { CustomerService } from '../../services/customer.service';
 import { AngularFireAnalytics } from '@angular/fire/analytics';
+import { Customer } from '../../utils/models/customer';
 
 @Component({
   selector: 'app-login',
@@ -69,22 +70,22 @@ export class LoginComponent implements OnInit {
 	signUp(email: string, password: string, firstName: string, lastName: string, username: string) {
 		return this.afAuth.createUserWithEmailAndPassword(email, password)
 		.then((result: any) => {
-			this.sendVerificationMail();
-			this.setUserData(result.user);
-			this.registerUserInDatabase(email, firstName, lastName, username);
+			this.sendVerificationMail(result.user, email, firstName, lastName, username);
 		}).catch((error: any) => {
 			console.log(error.message);
 			this.showAlertSignUpFail = true;
 		})
 	}
 
-	sendVerificationMail() {
+	sendVerificationMail(user: any, email: string, firstName: string, lastName: string, username: string) {
+
 		return this.afAuth.currentUser.then(u => {
 			if(u) {
 				u.sendEmailVerification()
 			}
 		}).then(() => {
-			this.showAlertSingUpSuccess = true;
+			this.setUserData(user);
+			this.registerUserInDatabase(user, email, firstName, lastName, username);
 		}).catch((error: any) => {
 			this.showAlertVerifyEmailFail = true;
 		});
@@ -134,31 +135,23 @@ export class LoginComponent implements OnInit {
 	 	})
 	}
 
-	registerUserInDatabase(email: string, firstName: string, lastName: string, username: string) {
-		let user = {email: "", firstname: "", lastname: "", username: "", role: "customer", profilepicture: ""}
-		user.email = email;
-		user.firstname = firstName;
-		user.lastname = lastName;
-		user.username = username;
-		user.profilepicture = this.defaultProfilePicture;
+	registerUserInDatabase(userData: any, email: string, firstName: string, lastName: string, username: string) {
+		const user: Customer = {
+			email: email, 
+			firstname: firstName, 
+			lastname: lastName, 
+			username: username, 
+			role: "customer", 
+			address: [],
+			orders: [],
+			profilepicture: this.defaultProfilePicture
+		};
 
-		this.customerService.getTotalCustomers().subscribe(idCustomer =>{
-			let respJson = JSON.parse(JSON.stringify(idCustomer));
-			this.customerService.registerUser(respJson.number.toString(), user).subscribe(response => {
-				this.updateUserWithId(respJson.number.toString());
-			});
-		});
-	}
-
-	updateUserWithId(id: string) {
-		let idJson ={id: ""};
-		idJson.id = id;
-		this.customerService.patchUser(id, idJson).subscribe(response=>{
-			let currentId = parseInt(id)
-			currentId = currentId +1;
-			this.customerService.patchTotalCustomer({number: currentId.toString()}).subscribe(response=>{
-				console.log("user added");
-			});
+		this.customerService.createOrUpdateCustomer(userData.uid, user).then((result: any) =>{
+			this.showAlertSingUpSuccess = true;
+		}).catch((error: any) => {
+			window.alert(error.message);
+			this.showAlertSignInFail = true;
 		});
 	}
 

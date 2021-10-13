@@ -8,7 +8,7 @@
 					<div *ngIf="productDetail">
 						<div class="row" *ngFor="let image of productDetail.images; let indexOfelement=index;">
 							<div class="col">
-								<a role="button" (click)="selectImage(image.imagepath)">
+								<a role="button" (click)="selectImage(image?.imagepath)">
 									<div class="card" style="width: 150px">
 										<div class="card-body">
 											<img src="{{image.imagepath}}" id="image{{indexOfelement}}" style="height: 120px; width: 120px;" />
@@ -32,7 +32,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-md-4">
+		<div class="col-md-4" *ngIf="productDetail">
 			<div class="row">
 				<div class="col">
 					<h4>{{productDetail.name}}</h4>
@@ -75,7 +75,7 @@
 				</div>
 			</div>
 			<select class="form-select" formControlName="name" aria-label="Size" (change)="selectSize($event)" >
-				<option *ngFor="let size of availableSizes; let indexOfelement=index;" value="{{size.size}}">{{size.size}}</option>
+				<option *ngFor="let size of availableSizes; let indexOfelement=index;"  value="{{size.size}}">{{size.size}}</option>
 			</select>
 			<br>
 			<div class="row">
@@ -85,11 +85,13 @@
 				<div class="col-md-4">
 					<select class="form-select" formControlName="quantity" aria-label="Quantity" (change)="setQuantity($event)">
 						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
 					</select>
 				</div>
 			</div>
 			<br>
-			<div class="row">
+			<div class="row" *ngIf="productDetail">
 				<div class="col-md-3">
 					<h4>${{productDetail.price}}</h4>
 				</div>
@@ -104,7 +106,7 @@
 		</div>
 	</div>
 	<br>
-	<div class="row">
+	<div class="row" *ngIf="productDetail">
 		<div class="col">
 			<div class="card">
 				<div class="card-header">

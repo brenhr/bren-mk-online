@@ -5,7 +5,9 @@ import { finalize } from 'rxjs/operators';
 import { Fileupload } from '../utils/models/fileupload';
 import { CustomerService } from '../services/customer.service';
 import { ProductService } from '../services/product.service';
-
+import { Customer } from '../utils/models/customer';
+import { Product } from '../utils/models/product';
+import { Image } from '../utils/models/image';
 
 @Injectable({
   providedIn: 'root'
@@ -18,16 +20,16 @@ export class StorageService {
 				private customerService: CustomerService,
 				private productService: ProductService) { }
 
-	pushFileToStorage(fileUpload: Fileupload, idCustomer: string, username: string, idToken: string): Observable<number | undefined> {
+	pushFileToStorage(fileUpload: Fileupload, idCustomer: string, customer: Customer): Observable<number | undefined> {
 		
-		let filePath = `${this.basePathProfilePhotos}/${username}/${fileUpload.file.name}`;
+		let filePath = `${this.basePathProfilePhotos}/${idCustomer}/${fileUpload.file.name}`;
 		const storageRef = this.storage.ref(filePath);
 		const uploadTask = this.storage.upload(filePath, fileUpload.file);
 		uploadTask.snapshotChanges().pipe(
 			finalize(() => {
 				storageRef.getDownloadURL().subscribe(downloadURL => {
-					console.log(downloadURL);
-					this.uploadPictureToDatabase(downloadURL, idCustomer, idToken);				
+					customer.profilepicture = downloadURL;
+					this.uploadPictureToDatabase(downloadURL, idCustomer, customer);				
 				});
 			})
 		).subscribe();
@@ -48,27 +50,29 @@ export class StorageService {
 		}
 	}
 
-	uploadPictureToDatabase(url: string, idCustomer: string, idToken: string) {
-		let picture = {profilepicture: ""};
-		picture.profilepicture = url;
-		this.customerService.patchUser(idCustomer, picture).subscribe(response => {
+	uploadPictureToDatabase(url: string, idCustomer: string, customer: Customer) {
+		this.customerService.createOrUpdateCustomer(idCustomer, customer).then((response: any) =>{
 			console.log(response);
+		}).catch((error: any) =>{
+			console.log("Error: " + error);
 		});
 	}
 
-	uploadProductImagesToDatabase(body: any, idProduct: string, idToken: string) {
-		this.productService.patchProduct(idProduct, idToken, body).subscribe(response =>{
+	uploadProductImagesToDatabase(body: Image[], idProduct: string, idToken: string, product: Product) {
+		product.images = body;
+		this.productService.update(idProduct, product).then((response: any) =>{
 			console.log(response);
+		}).catch((error: any) =>{
+			console.log("Error: " + error);
 		});
-
 	}
 
 	pushFilesToStorage(fileUpload1: Fileupload, fileUpload2: Fileupload, fileUpload3: Fileupload,
-						 idProduct: string, model: string, idToken: string): Observable<number | undefined> {
+						 idProduct: string, model: string, idToken: string, product: Product): Observable<number | undefined> {
 		let filePath1 = '';
 		let filePath2 = '';
 		let filePath3 = '';
-		let arrayFiles =[{imagepath: "", type: "main"},{imagepath: "", type: "cloth"},{imagepath: "", type: "model"}];
+		let arrayFiles: Image[] =[];
 		filePath1 = `${this.basePathProducts}/${model}/${fileUpload1.file.name}`;
 		filePath2 = `${this.basePathProducts}/${model}/${fileUpload2.file.name}`;
 		filePath3 = `${this.basePathProducts}/${model}/${fileUpload3.file.name}`;
@@ -82,17 +86,20 @@ export class StorageService {
 		uploadTask1.snapshotChanges().pipe(
 			finalize(() => {
 				storageRef1.getDownloadURL().subscribe(downloadURL => {
-					arrayFiles[0].imagepath = downloadURL;
+					let image1: Image = {type: "main", imagepath: downloadURL};
+					arrayFiles.push(image1);
 					uploadTask2.snapshotChanges().pipe(
 						finalize(() => {
 							storageRef2.getDownloadURL().subscribe(downloadURL => {
-								arrayFiles[1].imagepath = downloadURL;
+								let image2: Image = {type: "cloth", imagepath: downloadURL};
+								arrayFiles.push(image2);
 								uploadTask3.snapshotChanges().pipe(
 									finalize(() => {
 										storageRef3.getDownloadURL().subscribe(downloadURL => {
-											arrayFiles[2].imagepath = downloadURL;
+											let image3: Image = {type: "model", imagepath: downloadURL};
+											arrayFiles.push(image3);
 											let body = {images: arrayFiles};
-											this.uploadProductImagesToDatabase(body, idProduct, idToken);
+											this.uploadProductImagesToDatabase(arrayFiles, idProduct, idToken, product);
 										});
 									})
 								).subscribe();		
@@ -104,6 +111,4 @@ export class StorageService {
 		).subscribe();
 		return uploadTask1.percentageChanges();
 	}
-
-
 }

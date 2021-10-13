@@ -10,7 +10,11 @@ export const environment = {
     appId: "1:1088949012707:web:e720d2307f2567b7141dd6",
     measurementId: "G-JWMGKYDJTV"
   },
+  endpoints: {
+    signUp: "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=",
+    verifyEmail: "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key="
+  },
   assets: {
-    defaultProfilePicture: "https://firebasestorage.googleapis.com/v0/b/bren-mk-online.appspot.com/o/profile-pictures%2Fprofile-default.png?alt=media&token=4009e911-f56d-4e19-adc1-75628d7f66f1"
+    defaultProfilePicture: "https://firebasestorage.googleapis.com/v0/b/bren-mk-online.appspot.com/o/assets%2Fprofile-default.png?alt=media&token=5a9b8d37-1ebd-4ba3-907f-c5e35a3e0b0b"
   }
 };

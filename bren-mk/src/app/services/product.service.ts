@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { AngularFirestore, AngularFirestoreDocument, AngularFirestoreCollection } from '@angular/fire/firestore';
+import { Product } from '../utils/models/product'
 
 @Injectable({
 	providedIn: 'root',
@@ -9,35 +12,28 @@ export class ProductService {
 
 	databaseURI: string = environment.firebase.databaseURL;
 
-	constructor(private http:HttpClient) {
+	constructor(private http:HttpClient,
+				private firestore: AngularFirestore) {
 
 	}
 
-	getProducts(){
-		return this.http.get(`${this.databaseURI}/product.json`);
+	getProducts(): AngularFirestoreCollection<Product>{
+		return this.firestore.collection('product');
 	}
 
-	registerProduct(id: string, idToken:string, body:object){
-		return this.http.patch(`${this.databaseURI}/product/${id}.json?auth=${idToken}`, body);
+	registerProduct(body: Product): Promise<any>{
+		return this.firestore.collection('product').add({... body});
 	}
 
-	patchProduct(id:string, idToken:string, value:object){
-		return this.http.patch(`${this.databaseURI}/product/${id}.json?auth=${idToken}`,value);
+	getProduct(id:string): Observable<any> {
+		return this.firestore.collection('product').doc(id).valueChanges();
 	}
 
-	getProductDetail(id:string){
-		return this.http.get(`${this.databaseURI}/product/${id}.json`);
+	update(id: string, data: Product): Promise<any> {
+		return this.firestore.collection('product').doc(id).update(data);
 	}
 
-	getProductsByLimit(infLimit: number, filter: number){
-		return this.http.get(`${this.databaseURI}/product.json?orderBy="$key"&startAt="${infLimit}"&limitToFirst=${filter}`);
-	}
-
-	getTotalProducts() {
-		return this.http.get(`${this.databaseURI}/totalProducts.json`);
-	}
-
-	patchTotalProducts(idToken: string, number: any){
-		return this.http.patch(`${this.databaseURI}/totalProducts.json?auth=${idToken}`, number);
+	filterProducts(field: string, value: string): AngularFirestoreCollection<Product> {
+		return this.firestore.collection('product', ref => ref.where(field, '==', value));
 	}
 }

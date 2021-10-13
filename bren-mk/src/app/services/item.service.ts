@@ -1,39 +1,39 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
+import { Item } from '../utils/models/item';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ItemService {
 
-	databaseURI: string = environment.firebase.databaseURL;
+	private dbPath = '/item';
 
-	constructor(private http:HttpClient) {
+	itemRef: AngularFireList<Item>;
 
+	constructor(private http:HttpClient,
+				private db: AngularFireDatabase) {
+
+		this.itemRef = db.list(this.dbPath);
 	}
 
-	getItem(id: string){
-		return this.http.get(`${this.databaseURI}/item/${id}.json`);
+	getItems(): AngularFireList<Item> {
+		return this.itemRef;
 	}
 
-	getItems() {
-		return this.http.get(`${this.databaseURI}/item.json`);
+	createItem(item: Item, id: string) {
+		return this.db.list(this.dbPath).set(id, item);
 	}
 
-	registerItem(id: string, idToken:string, body:object){
-		return this.http.patch(`${this.databaseURI}/item/${id}.json?auth=${idToken}`, body);
+	update(id: string, value: any) {
+		return this.itemRef.update(id, value);
 	}
 
-	patchItem(id:string, idToken:string, value:object){
-		return this.http.patch(`${this.databaseURI}/item/${id}.json?auth=${idToken}`,value);
+	delete(id: string) {
+		return this.itemRef.remove(id);
 	}
 
-	getTotalItems() {
-		return this.http.get(`${this.databaseURI}/totalItems.json`);
-	}
-
-	patchTotalItems(idToken: string, number: any){
-		return this.http.patch(`${this.databaseURI}/totalItems.json?auth=${idToken}`, number);
-	}
 }

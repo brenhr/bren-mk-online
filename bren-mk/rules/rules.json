@@ -65,6 +65,10 @@
     "totalItems": {
       ".read": true,
       ".write": "auth != null"
+    },
+    "example": {
+      ".read": true,
+      ".write": true
     }
   }
 }

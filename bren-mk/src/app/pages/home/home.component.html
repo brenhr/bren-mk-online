@@ -11,36 +11,28 @@
 			<h4 style="color: #ff8080">Brand</h4>
 			<form>
 				<div class="form-check" *ngFor="let brand of brands; let indexOfelement=index;">
-					<input class="form-check-input" type="checkbox" value="{{brand.name}}" id="brand{{indexOfelement}}">
-					<label class="form-check-label" for="brand{{indexOfelement}}">{{brand.name}}</label>
+					<div *ngIf="brand.key">
+						<input class="form-check-input" type="checkbox" value="{{brand.key}}" id="{{brand.key}}" (change)="filterProducts('brandId', brand.key)">
+						<label class="form-check-label" for="{{brand.key}}">{{brand.name}}</label>
+					</div>
+					
 				</div>
 			</form>
 			<hr>
 			<h4 style="color: #ff8080">Categories</h4>
 			<form>
-				<div class="form-check" *ngFor="let category of categories; let indexOfelement=index;">
-					<input class="form-check-input" type="checkbox" value="" id="category{{indexOfelement}}">
-					<label class="form-check-label" for="category{{indexOfelement}}">{{category.name}}</label>
-				</div>
-			</form>
-			<hr>
-			<h4 style="color: #ff8080">Colors</h4>
-			<form>
-				<div class="form-check" *ngFor="let color of colors; let indexOfelement=index;">
-					<a id="color{{indexOfelement}}">
-						<div class="row">
-							<div class="col-md-2">
-								<span class="dot" style="background: {{color.hexcode}}" ></span> 
-							</div>
-							<div class="col-md-10">
-								<label class="form-check-label"> {{color.name}}</label>
-							</div>
-						</div>
-					</a>
+				<div class="form-check" *ngFor="let category of categories;">
+					<input class="form-check-input" type="checkbox" value="{{category.key}}" id="{{category.key}}" (change)="filterProducts('categoryId',category.key)">
+					<label class="form-check-label" for="{{category.key}}">{{category.name}}</label>
 				</div>
 			</form>
 		</div>
 		<div class="col-md-9">
+			<div *ngIf="rowProducts">
+				<div class="alert alert-danger" role="alert" id="errorProduct" *ngIf="rowProducts.length == 0">
+					No products found.
+				</div>
+			</div>
 			<div *ngFor="let rowProduct of rowProducts; let indexOfelement=index;">
 				<div class="row">
 					<div class="col-md-4" *ngFor="let product of rowProduct.products; let indexOfelement=index;">
@@ -56,7 +48,7 @@
 											<h6 class="text-end" style="color: #ff8080">${{product.price}}</h6>
 										</div>
 									</div>
-									<a href="/product-detail/{{product.id}}" class="btn btn-primary float-end">See details</a>
+									<a href="/product-detail/{{product.key}}" class="btn btn-primary float-end">See details</a>
 								</div>
 							</div>
 						</div>

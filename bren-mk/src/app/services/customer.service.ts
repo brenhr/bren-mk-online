@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
+import { Customer } from '../utils/models/customer';
 
 @Injectable({
 	providedIn: 'root',
@@ -8,38 +12,32 @@ import { environment } from '../../environments/environment';
 
 export class CustomerService {
 
-	databaseURI: string = environment.firebase.databaseURL;
+	private dbPath = '/customer';
 
-	constructor(private http:HttpClient) {
+	customerRef: AngularFireList<Customer>;
+
+	constructor(private http:HttpClient,
+				private db: AngularFireDatabase) {
+
+		this.customerRef = db.list(this.dbPath);
 
 	}
 
-	getUser(id: string){
-		return this.http.get(`${this.databaseURI}/customer/${id}.json`);
+	getCustomers(): AngularFireList<Customer> {
+		return this.customerRef;
 	}
 
-	getUserByEmail(email: string) {
-		return this.http.get(`${this.databaseURI}/customer.json?orderBy="email"&equalTo="${email}"&print=pretty`);
+	createOrUpdateCustomer(id: string, customer: Customer) {
+		return this.db.list(this.dbPath).set(id, customer);
 	}
 
-	registerUser(id: string, body:object){
-		return this.http.patch(`${this.databaseURI}/customer/${id}.json`, body);
+	delete(id: string) {
+		return this.customerRef.remove(id);
 	}
 
-	patchUser(id:string, value:object){
-		return this.http.patch(`${this.databaseURI}/customer/${id}.json`,value);
-	}
+	getCustomerByUid(uid: string): Observable<any> {
 
-	getUserDetail(id:string){
-		return this.http.get(`${this.databaseURI}/customer/${id}.json`);
-	}
-
-	getTotalCustomers() {
-		return this.http.get(`${this.databaseURI}/totalCustomers.json`);
-	}
-
-	patchTotalCustomer(number: any){
-		return this.http.patch(`${this.databaseURI}/totalCustomers.json`, number);
+		return this.db.object(this.dbPath + "/" + uid).snapshotChanges();
 	}
 
 }

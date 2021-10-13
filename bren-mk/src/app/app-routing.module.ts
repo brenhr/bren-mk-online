@@ -8,6 +8,8 @@ import { CartComponent } from './pages/cart/cart.component';
 import { CheckoutComponent } from './pages/checkout/checkout.component';
 import { ProductdetailComponent } from './common/productdetail/productdetail.component';
 import { AuthGuard } from "./utils/guard/auth.guard";
+import { ExampleComponent } from './pages/example/example.component';
+
 
 
 const routes: Routes = [
@@ -18,7 +20,8 @@ const routes: Routes = [
   { path: 'cart/:id/:colorId/:sizeId/:quantity', component: CartComponent },
   { path: 'cart', component: CartComponent },
   { path: 'checkout', component: CheckoutComponent, canActivate: [AuthGuard] },
-  { path: 'product-detail/:id', component: ProductdetailComponent }
+  { path: 'product-detail/:id', component: ProductdetailComponent },
+  { path: 'example', component: ExampleComponent }
 ];
 
 @NgModule({

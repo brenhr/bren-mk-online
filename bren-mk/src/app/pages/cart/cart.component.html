@@ -17,7 +17,7 @@
 		    				Products in cart: {{order.quantity}}
 		    			</div>
 		    			<div class="col-md-4">
-		    				Total: ${{order.price}} USD
+		    				Total: ${{order.total}} USD
 		    			</div>
 		    			<div class="col-md-4">
 		    				<button type="button" class="btn float-end" style="background-color: #ff8080">
@@ -39,8 +39,8 @@
 	    			Your products
 	    		</div>
 	    		<div class="card-body">
-	    			<div class="row">
-	    				<table class="table table-borderless">
+	    			<div class="row" >
+	    				<table class="table table-borderless" >
                             <thead>
                                 <tr>
                                 	<th scope="col" class="col-sm-2">Product</th>
@@ -53,10 +53,10 @@
                             <tbody>
                                 <tr *ngFor="let item of itemDetails;">
                                 	<td>
-                                    	<img  class="text-right" src="{{item.productDetail.images[0].imagepath}}" style="height: 120px; width: 120px;" />
+                                    	<img  class="text-right" src="{{item.productDetail?.mainImage}}" style="height: 120px; width: 120px;" />
                                     </td>
-                                    <td scope="row">1</td>
-                                    <td>{{item.productDetail.description}}</td>
+                                    <td scope="row">{{item.quantity}}</td>
+                                    <td>{{item.productDetail?.description}}</td>
                                     <td>Color: {{item.color}}, Size: {{item.size}}</td>
                                     <td class="text-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">

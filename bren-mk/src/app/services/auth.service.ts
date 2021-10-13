@@ -32,7 +32,7 @@ export class AuthService {
 
   get isLoggedIn(): boolean {
     const user = JSON.parse(localStorage.getItem('user')  || '{}');
-    return (user !== null && user.emailVerified === true) ? true : false;
+    return (user !== null && user.uid) ? true : false;
   }
 
   get isAnonymous(): boolean {

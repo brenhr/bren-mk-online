@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { Size } from '../utils/models/size';
+import { AngularFirestore, AngularFirestoreDocument, AngularFirestoreCollection } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -8,21 +11,18 @@ import { environment } from '../../environments/environment';
 export class SizeService {
 	databaseURI: string = environment.firebase.databaseURL;
 
-	constructor(private http:HttpClient) { }
+	constructor(private http:HttpClient,
+				private firestore: AngularFirestore) { }
 
-	getSizes(){
-		return this.http.get(`${this.databaseURI}/size.json`);
+	getSizes(): AngularFirestoreCollection<Size> {
+		return this.firestore.collection('size');
 	}
 
-	getSize(id: string){
-		return this.http.get(`${this.databaseURI}/size/${id}.json`);
+	registerSize(idToken:string, body: Size){
+		return this.firestore.collection('size').add({... body});
 	}
 
-	registerSize(idToken:string, body:object){
-		return this.http.post(`${this.databaseURI}/size.json?auth=${idToken}`, body);
-	}
-
-	patchSize(id:string, idToken:string, value:object){
-		return this.http.patch(`${this.databaseURI}/size/${id}.json?auth=${idToken}`, value);
+	getSize(id:string): Observable<any> {
+		return this.firestore.collection('size').doc(id).valueChanges();
 	}
 }

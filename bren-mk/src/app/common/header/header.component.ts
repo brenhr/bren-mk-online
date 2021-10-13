@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { AuthService } from "../../services/auth.service";
 import { CategoryService } from '../../services/category.service';
+import { Category } from '../../utils/models/category';
 
 @Component({
   selector: 'app-header',
@@ -9,7 +12,7 @@ import { CategoryService } from '../../services/category.service';
 })
 export class HeaderComponent implements OnInit {
 
-	categories: any;
+	categories?: Category[];
 	showLogoutOption: boolean;
 	showMyProfileOption: boolean;
 	showLoginOption: boolean;
@@ -25,9 +28,15 @@ export class HeaderComponent implements OnInit {
 		this.showLoginOption = !this.authService.isLoggedIn;
 		this.showLogoutOption = this.authService.isLoggedIn || this.authService.isAnonymous;
 		
-		this.categoryService.getCategories().subscribe(response => {
-			this.categories = response;
-		})
+		this.categoryService.getCategories().snapshotChanges().pipe(
+	      map(changes =>
+	        changes.map(c => 
+	          ({key: c.payload.doc.id, ... c.payload.doc.data()})
+	        )
+	      )
+	    ).subscribe(data => {
+	      this.categories = data;
+	    });
 	}
 
 }

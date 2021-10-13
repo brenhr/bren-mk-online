@@ -1,10 +1,16 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { AuthService } from "../../services/auth.service";
 import { CategoryService } from '../../services/category.service';
 import { BrandService } from '../../services/brand.service';
 import { ColorService } from '../../services/color.service';
 import { ProductService } from '../../services/product.service';
 import { AngularFireAnalytics } from '@angular/fire/analytics';
+import { Color } from '../../utils/models/color';
+import { Brand } from '../../utils/models/brand';
+import { Category } from '../../utils/models/category';
+import { Product } from '../../utils/models/product';
 
 @Component({
   selector: 'app-home',
@@ -13,15 +19,15 @@ import { AngularFireAnalytics } from '@angular/fire/analytics';
 })
 export class HomeComponent implements OnInit {
 	categories: any;
-	brands: any;
-	colors: any;
+	brands?: Brand[];
+	colors?: Color[];
 	products: any;
 	rowProducts: any;
 	groupProducts: any[];
+	arrayProducts?: Product[];
 	totalProducts: number;
 	totalColumns: number;
 	totalRows: number;
-	product: any;
 	infoAuth: any;
 
 	constructor(public authService: AuthService, 
@@ -46,40 +52,112 @@ export class HomeComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
-
-		this.categoryService.getCategories().subscribe(response => {
-			this.categories = response;
-		});
-
-		this.brandService.getBrands().subscribe(response => {
-			this.brands = response;
-		});
-
-		this.colorService.getColors().subscribe(response => {
-			this.colors = response;
-		});
-
-		this.getAllProducts();
-		console.log(this.rowProducts);
+		this.populatePage();
 	}
 
-	getAllProducts() {
-		this.productService.getTotalProducts().subscribe(response =>{
-			let resp = JSON.parse(JSON.stringify(response));
-			this.totalProducts = parseInt(resp.number.toString());
+	getAllProducts(){
+
+		this.productService.getProducts().snapshotChanges().pipe(
+			map(changes =>
+				changes.map(c =>
+					({key: c.payload.doc.id, ... c.payload.doc.data()})
+				)
+			)
+		).subscribe((data)=>{
+			this.arrayProducts = data;
+			console.log(this.arrayProducts);
+			this.totalProducts = this.arrayProducts.length;
 			this.totalRows = Math.floor(this.totalProducts / this.totalColumns);
 			this.totalProducts % this.totalColumns > 0 ? 
 				this.totalRows = this.totalRows + 1: this.totalRows = this.totalRows;
-			this.productService.getProducts().subscribe(response => {
-				let index = 0;
-				let resp = JSON.parse(JSON.stringify(response));
+			let index =0;
+			for(var i = 0; i < this.totalRows; i++) {
+				for(var j = 0; j < this.totalColumns; j++) {
+					if(data[index] != null) {
+						this.groupProducts.push(data[index]);
+					} else {
+						this.groupProducts.push({})
+					}
+					index ++;
+				}
+				this.rowProducts[i] = {products: []};
+				this.rowProducts[i].products = this.groupProducts;
+				this.groupProducts = [];
+			}
+		});
+	}
+
+	getAllColors() {
+		this.colorService.getColors().snapshotChanges().pipe(
+	      map(changes =>
+	        changes.map(c => 
+	          ({key: c.payload.doc.id, ... c.payload.doc.data()})
+	        )
+	      )
+	    ).subscribe(data => {
+	      this.colors = data;
+	    });
+	}
+
+	getAllBrands() {
+		this.brandService.getBrands().snapshotChanges().pipe(
+	      map(changes =>
+	        changes.map(c => 
+	          ({key: c.payload.doc.id, ... c.payload.doc.data()})
+	        )
+	      )
+	    ).subscribe(data => {
+	      this.brands = data;
+	    });
+	}
+
+	getAllCategories() {
+		this.categoryService.getCategories().snapshotChanges().pipe(
+	      map(changes =>
+	        changes.map(c => 
+	          ({key: c.payload.doc.id, ... c.payload.doc.data()})
+	        )
+	      )
+	    ).subscribe(data => {
+	      this.categories = data;
+	    });
+    }
+
+	populatePage() {
+		this.getAllCategories();
+		this.getAllBrands();
+		this.getAllColors();
+		this.getAllProducts();
+	}
+
+	filterProducts(fieldId: string, value: string) {
+		var element = <HTMLInputElement> document.getElementById(value);
+		let ischecked = element.checked;
+		if(ischecked) {
+			this.rowProducts = [];
+			this.groupProducts =[];
+			console.log(fieldId);
+			console.log(value);
+			this.productService.filterProducts(fieldId, value).snapshotChanges().pipe(
+		      map(changes =>
+		        changes.map(c => 
+		          ({key: c.payload.doc.id, ... c.payload.doc.data()})
+		        )
+		      )
+		    ).subscribe((data)=>{
+				this.arrayProducts = data;
+				console.log(this.arrayProducts);
+				this.totalProducts = this.arrayProducts.length;
+				this.totalRows = Math.floor(this.totalProducts / this.totalColumns);
+				this.totalProducts % this.totalColumns > 0 ? 
+					this.totalRows = this.totalRows + 1: this.totalRows = this.totalRows;
+				let index =0;
 				for(var i = 0; i < this.totalRows; i++) {
 					for(var j = 0; j < this.totalColumns; j++) {
-						this.product = resp[index];
-						if(resp[index] != null && resp[index]!= 'undefined') {
-							this.groupProducts.push(this.product);
+						if(data[index] != null) {
+							this.groupProducts.push(data[index]);
 						} else {
-							this.groupProducts.push({});
+							this.groupProducts.push({})
 						}
 						index ++;
 					}
@@ -88,7 +166,9 @@ export class HomeComponent implements OnInit {
 					this.groupProducts = [];
 				}
 			});
-		});
+		} else {
+			this.getAllProducts();
+		}
 		
 	}
 

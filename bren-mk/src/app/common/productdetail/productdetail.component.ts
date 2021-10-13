@@ -1,10 +1,16 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { ProductService } from '../../services/product.service';
 import { ColorService } from '../../services/color.service';
 import { SizeService } from '../../services/size.service';
 import { AngularFireAnalytics } from '@angular/fire/analytics';
+import { Size } from '../../utils/models/size';
+import { Color } from '../../utils/models/color';
+import { Product } from '../../utils/models/product';
+import { Detail } from '../../utils/models/detail';
 
 @Component({
   selector: 'app-productdetail',
@@ -13,19 +19,19 @@ import { AngularFireAnalytics } from '@angular/fire/analytics';
 })
 export class ProductdetailComponent implements OnInit {
 	id: string;
-	productDetail: any;
+	productDetail?: Product;
 	selectedImage: any;
 	availableColors: any[];
-	availableSizes: any [];
-	details: any [];
+	availableSizes: any[];
+	details?: Detail [];
 	selectedColor: string;
 	selectedColorId: string;
 	selectedSize: string;
 	selectedSizeId: string;
 	selectedQuantity: string;
 	infoAuth: any;
-	allSizes: any[];
-	allColors: any[];
+	allSizes?: Size[];
+	allColors?: Color[];
 
 	constructor(private route: ActivatedRoute, 
 				private productService: ProductService, 
@@ -35,8 +41,6 @@ export class ProductdetailComponent implements OnInit {
 		this.id="";
 		this.availableColors = [];
 		this.availableSizes = [];
-		this.allColors = [];
-		this.allSizes =[];
 		this.selectedColor = "";
 		this.selectedColorId = "";
 		this.selectedSize = "";
@@ -51,64 +55,106 @@ export class ProductdetailComponent implements OnInit {
 		this.availableSizes =[]
 		this.route.paramMap.subscribe(params => {
 			this.id = params.get('id') || "";
-			this.sizeService.getSizes().subscribe(result =>{
-				let resp = JSON.parse(JSON.stringify(result));
-				this.allSizes = resp;
-				this.selectedSizeId = "0";
-			});
-			this.colorService.getColors().subscribe(result =>{
-				let resp = JSON.parse(JSON.stringify(result));
-				this.allColors = resp;
-				this.selectedColorId = "0";
-			});
-			this.selectedQuantity = "1";
-			this.productService.getProductDetail(this.id).subscribe(response => {
-				this.productDetail = response;
-				let resp = JSON.parse(JSON.stringify(response));
-				let infoAnalytics = {selectedProduct: {id: resp.id, name: resp.name}, user: "" };
-				if(this.infoAuth.email !== undefined) {
-					infoAnalytics.user = this.infoAuth.email;
-				} else {
-					infoAnalytics.user = "anonymous";
-				}
-				this.analytics.logEvent('selected_product', infoAnalytics);
-				this.selectedImage = resp.images[0].imagepath;
-				this.details = resp.details;
-				for(let i= 0; i<this.details.length; i++) {
-					let idColor= this.details[i].color.id;
-					let idSize = this.details[i].size.id;
-					this.colorService.getColor(idColor).subscribe(response =>{
-						if(!this.colorExistsInArray(this.availableColors, response)) {
-							this.availableColors.push(response);
-						}
-						this.selectedColor = this.availableColors[0].name;
-					});
-
-					this.sizeService.getSize(idSize).subscribe(response => {
-						if(!this.sizeExistsInArray(this.availableSizes, response)) {
-							this.availableSizes.push(response);
-						}
-						this.selectedSize = this.availableSizes[0].size;
-					});
-				}
-				
-				
-			});
+			console.log(this.id);
+			this.getCatalogs();
+			this.getProductDetail();
 		});
 	}
 
-	selectImage(image: string,) {
+	getCatalogs() {
+		this.sizeService.getSizes().snapshotChanges().pipe(
+	      map(changes =>
+	        changes.map(c => 
+	          ({key: c.payload.doc.id, ... c.payload.doc.data()})
+	        )
+	      )
+	    ).subscribe(data => {
+	    	console.log(data);
+	      this.allSizes = data;
+	      this.selectedSizeId = this.allSizes[0].key as string;
+	    });
+
+		this.colorService.getColors().snapshotChanges().pipe(
+	      map(changes =>
+	        changes.map(c => 
+	          ({key: c.payload.doc.id, ... c.payload.doc.data()})
+	        )
+	      )
+	    ).subscribe(data => {
+	      this.allColors = data;
+	      this.selectedColorId = this.allColors[0].key as string;
+	    });
+		this.selectedQuantity = "1";
+	}
+
+	getProductDetail() {
+		this.productService.getProduct(this.id).subscribe((item: Product) =>{
+			this.productDetail = item;
+			this.productDetail.key = this.id;
+			this.sendAnalyticsInfo();
+			this.details = this.productDetail?.details;
+			if(this.details != undefined) {
+				this.details.forEach(detail => {
+					let idColor = detail.color;
+					let idSize = detail.size;
+					this.getColorById(idColor as string);
+					this.getSizeById(idSize as string);
+				});
+			}
+		}, (error: any) => {
+			console.log("Error: " + error);
+		});
+	}
+
+	getColorById(idColor: string) {
+		this.colorService.getColor(idColor).subscribe((item: Color) => {
+			let color: Color = item;
+			color.key = idColor;
+			if(!this.colorExistsInArray(this.availableColors, color)) {
+				this.availableColors.push(color);
+			}
+		}, (error: any) => {
+			console.log("Error: " + error);
+		});
+	}
+
+	getSizeById(idSize: string) {
+		this.sizeService.getSize(idSize).subscribe((item: Size) => {
+			let size: Size = item;
+			size.key = idSize;
+			if(!this.sizeExistsInArray(this.availableSizes, size)) {
+				this.availableSizes.push(size);
+			}
+		}, (error: any) => {
+			console.log("Error: " + error);
+		});
+	}
+
+	sendAnalyticsInfo() {
+		let infoAnalytics = {selectedProduct: {id: this.productDetail?.key, name: this.productDetail?.name}, user: "" };
+		if(this.infoAuth.email !== undefined) {
+			infoAnalytics.user = this.infoAuth.email;
+		} else {
+			infoAnalytics.user = "anonymous";
+		}
+		this.analytics.logEvent('selected_product', infoAnalytics);
+	}
+
+	selectImage(image: string | undefined) {
 		this.selectedImage = image;
 	}
 
 	selectSize(e: Event) {
 		this.selectedSize = (e.target as HTMLInputElement).value;
+		console.log(this.selectedSize);
 		this.selectedSizeId = this.findIdSize(this.selectedSize);
+		console.log(this.selectedSizeId);
 	}
 
 	selectColor(color: string) {
 		this.selectedColor = color;
 		this.selectedColorId = this.findIdColor(color);
+		console.log(this.selectedColorId);
 	}
 
 	colorExistsInArray(array: any[], obj: any) {
@@ -133,22 +179,22 @@ export class ProductdetailComponent implements OnInit {
 	}
 
 	findIdColor(name: string): string {
-		let colorId ="-1";
-		for(let i=0; i<this.allColors.length; i++){
-			if(this.allColors[i].name === name){
-				colorId = "" + i;
+		let colorId ="";
+		this.allColors?.forEach(color => {
+			if(color.name === name) {
+				colorId = color.key as string;
 			}
-		}
+		});
 		return colorId;
 	}
 
 	findIdSize(size: string): string {
-		let sizeId ="-1";
-		for(let i=0; i<this.allSizes.length; i++){
-			if(this.allSizes[i].size === size){
-				sizeId = "" + i;
+		let sizeId ="";
+		this.allSizes?.forEach(sizeVar =>{
+			if(sizeVar.size === size) {
+				sizeId = sizeVar.key as string;
 			}
-		}
+		});
 		return sizeId;
 	}
 }
